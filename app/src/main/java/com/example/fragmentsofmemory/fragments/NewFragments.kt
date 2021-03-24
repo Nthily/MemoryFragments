@@ -85,7 +85,7 @@ fun PageContent() {
         ){
             Surface(
                 modifier = Modifier
-                    .size(30.dp),
+                    .size(30.dp).align(Alignment.CenterVertically),
                 shape = CircleShape
             ) {
                 Image(painter = painterResource(R.drawable.qq20210315211722), contentDescription = null)
