@@ -49,7 +49,7 @@ fun DrawerInfo(items: List<DrawerItems>, drawerItemsViewModel: DrawerItemsViewMo
 
     Column(modifier = Modifier
         .fillMaxWidth()
-
+        .background(if(viewModel.lightTheme) Color(90,143,185) else Color(35, 48, 64))
     ) {
         Column(modifier = Modifier.height(150.dp)
         ) {
