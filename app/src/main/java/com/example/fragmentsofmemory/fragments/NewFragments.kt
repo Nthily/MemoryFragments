@@ -102,7 +102,7 @@ fun PageContent() {
                     }, colors = if(viewModel.selectedTime) ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1DC792))
                     else ButtonDefaults.buttonColors(MaterialTheme.colors.primary), modifier = Modifier.animateContentSize().padding(5.dp)) {
                         Text(if(viewModel.selectedTime) "时间存储完毕！"
-                        else "请选择记忆的时间吧~", modifier = Modifier.animateContentSize())
+                        else "请选择记忆的时间吧~")
                     }
                 }
             }

@@ -88,11 +88,11 @@ fun DeteilPage(userCardViewModel: UserCardViewModel) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 15.dp, end = 15.dp, top = 15.dp),
-                            fontWeight = FontWeight.W900,
-                            textAlign = TextAlign.Center
+                            fontWeight = FontWeight.W500,
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy((-15).dp), modifier = Modifier.align(Alignment.End)){
                             IconButton(onClick = {
+                                viewModel.reading = false
                                 viewModel.startEdit(viewModel.cardId, viewModel.testTxt, viewModel.timeResult)
                             }) {
                                 Icon((Icons.Rounded.Create), contentDescription = null, modifier = viewModel.iconSize)
