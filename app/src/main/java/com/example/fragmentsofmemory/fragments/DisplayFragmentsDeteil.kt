@@ -93,6 +93,7 @@ fun DeteilPage(userCardViewModel: UserCardViewModel) {
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy((-15).dp), modifier = Modifier.align(Alignment.End)){
                             IconButton(onClick = {
+                                viewModel.startEdit(viewModel.cardId, viewModel.testTxt, viewModel.timeResult)
                             }) {
                                 Icon((Icons.Rounded.Create), contentDescription = null, modifier = viewModel.iconSize)
                             }

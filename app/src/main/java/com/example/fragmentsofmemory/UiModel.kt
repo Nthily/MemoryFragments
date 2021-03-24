@@ -74,4 +74,23 @@ class UiModel: ViewModel(){
                 .alpha(0.2f),contentScale = ContentScale.Crop)
     }
 
+
+    fun startEdit(cardID:Int, userContent:String, time:String) {
+        cardId = cardID
+        adding = true
+        maining = false
+        textModify = userContent
+        timeResult = time
+        editing = true
+    }
+
+    fun endAddPage() {
+        adding = false
+        maining = true
+        selectedTime = false
+        timeResult = ""
+        editing = false
+        textModify = ""
+    }
+
 }

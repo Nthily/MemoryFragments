@@ -121,12 +121,7 @@ fun CreateMemory(userName:String,
                             modifier = Modifier.align(Alignment.End)
                         ) {
                             IconButton(onClick = {
-                                viewModel.cardId = cardID
-                                viewModel.adding = true
-                                viewModel.maining = false
-                                viewModel.textModify = userContent
-                                viewModel.timeResult = time
-                                viewModel.editing = true
+                                viewModel.startEdit(cardID, userContent, time)
                             }) {
                                 Icon(
                                     (Icons.Rounded.Create),

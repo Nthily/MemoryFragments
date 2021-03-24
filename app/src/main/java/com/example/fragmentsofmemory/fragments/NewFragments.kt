@@ -132,8 +132,6 @@ fun AddingPage(userCardViewModel: UserCardViewModel) {
             },
 
             topBar = {
-
-
                 TopAppBar(
                     title = {},
                     navigationIcon = {
@@ -159,12 +157,7 @@ fun AddingPage(userCardViewModel: UserCardViewModel) {
                                         )
                                     }
 
-                                    viewModel.adding = false
-                                    viewModel.maining = true
-                                    viewModel.selectedTime = false
-                                    viewModel.timeResult = ""
-                                    viewModel.editing = false
-                                    viewModel.textModify = ""
+                                    viewModel.endAddPage()
                                     //   userContent.value = ""
                                 },
                                 indication = null,
