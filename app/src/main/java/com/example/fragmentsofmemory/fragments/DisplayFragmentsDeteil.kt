@@ -101,9 +101,12 @@ fun DeteilPage(userCardViewModel: UserCardViewModel) {
                                 Icon(painter = painterResource(id = R.drawable.reply_24px), contentDescription = null, modifier = viewModel.iconSize)
                             }
                             IconButton(onClick = {
+                                viewModel.deleteCardInDeteilCard(userCardViewModel)
+                                /*
                                 userCardViewModel.RemoveDataBase(viewModel.cardId)
                                 viewModel.reading = false
-                                viewModel.maining = true
+                                viewModel.maining = true*/
+
                             }) {
                                 Icon(Icons.Rounded.Delete, contentDescription = null, modifier = viewModel.iconSize)
                             }

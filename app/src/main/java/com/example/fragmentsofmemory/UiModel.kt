@@ -53,7 +53,8 @@ class UiModel: ViewModel(){
     fun endReading() {
         reading = false
         maining = true
-
+        cardId = 0
+        timeResult = ""
     }
 
 
@@ -91,6 +92,13 @@ class UiModel: ViewModel(){
         timeResult = ""
         editing = false
         textModify = ""
+    }
+
+
+    fun deleteCardInDeteilCard(userCardViewModel: UserCardViewModel) {
+        userCardViewModel.RemoveDataBase(cardId)
+        reading = false
+        maining = true
     }
 
 }
