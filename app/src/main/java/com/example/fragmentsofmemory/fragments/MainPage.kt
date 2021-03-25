@@ -137,7 +137,11 @@ fun CreateMemory(userName:String,
                                     modifier = viewModel.iconSize
                                 )
                             }
-                            IconButton(onClick = { if(viewModel.maining)userCardViewModel.RemoveDataBase(cardID) }) {
+                            IconButton(onClick = {
+                                if(viewModel.maining){
+                                    viewModel.cardId = cardID
+                                    viewModel.deleteCard(userCardViewModel)
+                                } }) {
                                 Icon(
                                     Icons.Rounded.Delete,
                                     contentDescription = null,

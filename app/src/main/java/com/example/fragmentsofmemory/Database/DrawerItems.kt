@@ -8,6 +8,6 @@ import androidx.room.PrimaryKey
 data class DrawerItems(
     @PrimaryKey val uid: Int,
     @ColumnInfo(name = "DrawerItems") val drawerItems: String,
-    @ColumnInfo(name = "DrawerItemsId") val drawerItemsId: Int
+
     //   @ColumnInfo(name = "userImg") val userImg: Image
 )

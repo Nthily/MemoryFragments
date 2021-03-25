@@ -90,11 +90,12 @@ fun DrawerInfo(items: List<DrawerItems>, drawerItemsViewModel: DrawerItemsViewMo
         ) {
             items(items.size) {
                 Column(
+                    /*
                     modifier = Modifier
                         .clickable {
                             viewModel.selectedItems = items[it].drawerItemsId
                         }
-                        .background(if (items[it].drawerItemsId != viewModel.selectedItems) MaterialTheme.colors.surface else MaterialTheme.colors.primary)
+                        .background(if (items[it].drawerItemsId != viewModel.selectedItems) MaterialTheme.colors.surface else MaterialTheme.colors.primary)*/
                 ){
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -138,7 +139,7 @@ fun DisplayDrawerContent(viewModel:UiModel, drawerItemsViewModel: DrawerItemsVie
         val drawerItems: List<DrawerItems>? by drawerItemsViewModel.allDrawerItems.observeAsState()
 
 
-        DrawerInfo(drawerItems!!, drawerItemsViewModel)
+        drawerItems?.let { DrawerInfo(it, drawerItemsViewModel) }
 
         if(viewModel.requestCloseDrawerPage) {
             scope.launch {

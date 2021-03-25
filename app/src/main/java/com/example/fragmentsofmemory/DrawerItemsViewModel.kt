@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
@@ -24,7 +25,7 @@ class DrawerItemsViewModel(application: Application): AndroidViewModel(applicati
 
     private val db by lazy{DrawerItemsDataBase.getDatabase(application)}
 
-    var allDrawerItems = MutableLiveData(listOf<DrawerItems>())
+    var allDrawerItems:LiveData<List<DrawerItems>> = db.getItems().getAll()
 
     /*
     init {
@@ -39,20 +40,14 @@ class DrawerItemsViewModel(application: Application): AndroidViewModel(applicati
 
     init {
         viewModelScope.launch(Dispatchers.IO){
-            val items = db.getItems().getAll()
-            viewModelScope.launch(Dispatchers.Main){
-                allDrawerItems.value = items
-            }
+
         }
     }
 
+
     fun AddDrawerItemsDatabase(itemsName: String) {
         viewModelScope.launch(Dispatchers.IO){
-            val itemsObj = DrawerItems((System.currentTimeMillis() % Int.MAX_VALUE).toInt(), itemsName, (allDrawerItems.value?.size
-                ?: 0) + 1)
-            viewModelScope.launch(Dispatchers.Main) {
-                allDrawerItems.value = allDrawerItems.value?.plus(listOf(itemsObj))
-            }
+            val itemsObj = DrawerItems(0, itemsName)
             db.getItems().insert(itemsObj)
         }
     }

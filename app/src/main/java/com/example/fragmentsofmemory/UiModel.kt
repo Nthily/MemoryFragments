@@ -95,10 +95,12 @@ class UiModel: ViewModel(){
     }
 
 
-    fun deleteCardInDeteilCard(userCardViewModel: UserCardViewModel) {
+    fun deleteCard(userCardViewModel: UserCardViewModel) {
         userCardViewModel.RemoveDataBase(cardId)
         reading = false
         maining = true
+        timeResult = ""
+        textModify = ""
     }
 
 }
