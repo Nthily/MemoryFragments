@@ -58,7 +58,7 @@ fun Modifier.percentOffsetX(percent: Float): Modifier =
 @Composable
 fun PageContent() {
     val viewModel: UiModel = viewModel()
-    viewModel.SetSecBackground(background = R.drawable.pattern_2)
+    viewModel.SetSecBackground(background = R.drawable._e826ba47840c0723c356ce92e6d8b39)
 
 
     Column(modifier = Modifier
@@ -148,12 +148,17 @@ fun AddingPage(userCardViewModel: UserCardViewModel) {
                                 onClick = {
 
                                     if(viewModel.editing) {
-                                        userCardViewModel.UpdateCardMsg(viewModel.cardId, viewModel.textModify, viewModel.timeResult)
+                                        userCardViewModel.UpdateCardMsg(
+                                            viewModel.cardId,
+                                            viewModel.textModify,
+                                            viewModel.timeResult,
+                                            viewModel.currentCategory)
                                     }
                                     else {
-                                        userCardViewModel.AddDataBase(
+                                        userCardViewModel.addDataBase(
                                         viewModel.textModify,
-                                        viewModel.timeResult
+                                        viewModel.timeResult,
+                                        viewModel.currentCategory
                                         )
                                     }
 

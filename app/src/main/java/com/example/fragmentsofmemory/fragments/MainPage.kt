@@ -1,14 +1,7 @@
 package com.example.fragmentsofmemory.fragments
 
-import android.content.ContentValues
-import android.content.ContentValues.TAG
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,17 +12,13 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -41,11 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fragmentsofmemory.*
+import com.example.fragmentsofmemory.Database.DrawerItems
 import com.example.fragmentsofmemory.Database.UserCard
 import com.example.fragmentsofmemory.Database.UserInfo
 import com.example.fragmentsofmemory.R
-import com.example.fragmentsofmemory.ui.theme.MyTheme
-import com.example.fragmentsofmemory.ui.theme.blueee
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -156,6 +144,25 @@ fun CreateMemory(userName:String,
     }
 }
 
+
+@Composable
+fun AlertNoCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "该分类下还没有任何记忆碎片噢~ _(:з)∠)_",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.body1,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
 @Composable
 fun ShowAllCards(items: List<UserCard>,
                  userNameitems: List<UserInfo>,
@@ -163,30 +170,16 @@ fun ShowAllCards(items: List<UserCard>,
 
   //  Log.d(ContentValues.TAG, "Hello ${items.size}")
 
+    val viewModel: UiModel = viewModel()
     Column(modifier = Modifier.fillMaxHeight()) {
-        if (items.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "该分类下还没有任何记忆碎片噢~ _(:з)∠)_",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.body1,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f),
-                reverseLayout = true, state = LazyListState(items.size)
-            ) {
-                items(items.size) {
-                    Column(verticalArrangement = Arrangement.SpaceEvenly) {
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f),
+            reverseLayout = true, state = LazyListState(items.size)
+        ) {
+            items(items.size) {
+                Column(verticalArrangement = Arrangement.SpaceEvenly) {
+                    if(items[it].categoryID == viewModel.currentCategory) {
                         CreateMemory(
                             userName = userNameitems[0].userName,
                             userContent = items[it].content,
@@ -195,11 +188,37 @@ fun ShowAllCards(items: List<UserCard>,
                             userCardViewModel = userCardViewModel,
                             cardID = items[it].id
                         )
+                    }
+                    // Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                }
+            }
+        }
+        /*
+        if (userCardViewModel.searchCardNum(viewModel.currentCategory) == 0) {
+            AlertNoCard()
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f),
+                reverseLayout = true, state = LazyListState(items.size)
+            ) {
+                items(items.size) {
+                    Column(verticalArrangement = Arrangement.SpaceEvenly) {
+                        if(items[it].categoryID == viewModel.currentCategory) {
+                            CreateMemory(
+                                userName = userNameitems[0].userName,
+                                userContent = items[it].content,
+                                time = items[it].time,
+                                memoryOrder = it + 1,
+                                userCardViewModel = userCardViewModel,
+                                cardID = items[it].id
+                            )
+                        }
                         // Spacer(modifier = Modifier.padding(vertical = 5.dp))
                     }
                 }
             }
-        }
+        }*/
     }
 
 }
@@ -251,7 +270,6 @@ fun TopBar(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 
 @Composable
 fun HomePageEntrances(userCardViewModel: UserCardViewModel,
-                      drawerItemsViewModel: DrawerItemsViewModel,
                         userInfoViewModel: UserInfoViewModel) {
 
     val scaffoldState = rememberScaffoldState()
@@ -261,10 +279,14 @@ fun HomePageEntrances(userCardViewModel: UserCardViewModel,
     val userCardvalue: List<UserCard>? by userCardViewModel.allCards.observeAsState()
     val userInfovalue: List<UserInfo>? by userInfoViewModel.userInfo.observeAsState()
 
+    val userCategoryNum: List<Pair<Int, Int>>? by userCardViewModel.cardNum.observeAsState()
+
+    val drawerItems: List<DrawerItems>? by userCardViewModel.drawer.observeAsState()
+
     Scaffold(
         content = {
             //  HomePage(scaffoldState = scaffoldState, scope = scope, userCardViewModel)
-            viewModel.SetBackground(background = R.drawable.pattern_2)
+            viewModel.SetBackground(background = R.drawable._00d79dc3b43e3fdf3dc64452b0efe35)
 
             userCardvalue?.let { it1 ->
                 userInfovalue?.let { it2 ->
@@ -288,7 +310,20 @@ fun HomePageEntrances(userCardViewModel: UserCardViewModel,
             }
         },
         //   bottomBar = { BottomApps() },
-        drawerContent = { DisplayDrawerContent(viewModel, drawerItemsViewModel, scaffoldState, scope) },
+        drawerContent = {
+            drawerItems?.let {
+                userCategoryNum?.let { it1 ->
+                    DisplayDrawerContent(
+                        viewModel = viewModel,
+                        scaffoldState = scaffoldState,
+                        scope = scope,
+                        userCardViewModel = userCardViewModel,
+                        categoryNum = it1,
+                        drawerItems = drawerItems!!
+                    )
+                }
+            }
+                },
         scaffoldState = scaffoldState,
         topBar = {
             TopBar(scaffoldState, scope)

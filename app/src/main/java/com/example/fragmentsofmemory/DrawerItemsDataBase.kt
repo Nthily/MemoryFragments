@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.fragmentsofmemory.Database.DrawerItems
 import com.example.fragmentsofmemory.Database.DrawerItemsDao
+import com.example.fragmentsofmemory.Database.UserCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -27,7 +28,7 @@ abstract class DrawerItemsDataBase : RoomDatabase() {
             INSTANCE?.let { database ->
                 scope.launch {
                     val dao = database.getDao()
-                    dao.insert(DrawerItems(0, "Home"))
+                    dao.insert(DrawerItems(0,"Home"))
                 }
             }
         }
@@ -46,7 +47,7 @@ abstract class DrawerItemsDataBase : RoomDatabase() {
                     context.applicationContext,
                     DrawerItemsDataBase::class.java,
                     "database-DrawerItems"
-                )   .addCallback(DrawerItemsDataBaseCallback(scope))
+                ) //  .addCallback(DrawerItemsDataBaseCallback(scope))
                     .build()
 
                 INSTANCE = instance

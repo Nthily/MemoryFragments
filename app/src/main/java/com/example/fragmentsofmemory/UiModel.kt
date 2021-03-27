@@ -30,7 +30,7 @@ class UiModel: ViewModel(){
     var draweringPage by mutableStateOf(false)
     var requestCloseDrawerPage by mutableStateOf(false)
 
-    var selectedItems by mutableStateOf(0)
+    var selectedItems by mutableStateOf(1)
 
     var reading by mutableStateOf(false)
 
@@ -49,6 +49,8 @@ class UiModel: ViewModel(){
     var textModify by mutableStateOf("")
     var editing by mutableStateOf(false)
 
+    var currentCategory by mutableStateOf(1)
+
 
     fun endReading() {
         reading = false
@@ -63,16 +65,16 @@ class UiModel: ViewModel(){
     fun SetBackground(background: Int): Unit{
         return Image(painter = painterResource(id = background), contentDescription = null,
             modifier = Modifier
-            .fillMaxSize()
-            .alpha(0.1f),contentScale = ContentScale.Crop)
+            .fillMaxSize(),
+            contentScale = ContentScale.Crop)
     }
 
     @Composable
     fun SetSecBackground(background: Int): Unit{
         return Image(painter = painterResource(id = background), contentDescription = null,
             modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.2f),contentScale = ContentScale.Crop)
+                .fillMaxSize(),
+            contentScale = ContentScale.Crop)
     }
 
 
@@ -96,7 +98,7 @@ class UiModel: ViewModel(){
 
 
     fun deleteCard(userCardViewModel: UserCardViewModel) {
-        userCardViewModel.RemoveDataBase(cardId)
+        userCardViewModel.removeDataBase(cardId)
         reading = false
         maining = true
         timeResult = ""

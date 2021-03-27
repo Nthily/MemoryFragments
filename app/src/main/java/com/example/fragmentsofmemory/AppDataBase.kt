@@ -4,26 +4,53 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.fragmentsofmemory.Database.DrawerItems
+import com.example.fragmentsofmemory.Database.DrawerItemsDao
 import com.example.fragmentsofmemory.Database.UserCard
 import com.example.fragmentsofmemory.Database.UserCardContentDao
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
-@Database(entities = [UserCard::class], version = 1)
+@Database(entities = [UserCard::class, DrawerItems::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun notes(): UserCardContentDao
+    abstract fun getDrawer(): DrawerItemsDao
+
+    private class AppDataBaseCallback(
+        private val scope: CoroutineScope
+    ): RoomDatabase.Callback() {
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
+            INSTANCE?.let { database ->
+                scope.launch {
+                    val dao = database.notes()
+                    val Drawer = database.getDrawer()
+
+                    Drawer.insert(DrawerItems(0, "Home"))
+
+                    dao.insert(UserCard(0, 1, "你好呀这是一个留言", "test"))
+                }
+            }
+        }
+    }
 
     companion object{
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context): AppDatabase {
+        fun getDatabase(context: Context,
+                        scope: CoroutineScope
+        ): AppDatabase {
 
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "database-cardContent"
-                ).build()
+                )  .addCallback(AppDataBaseCallback(scope))
+                    .build()
                 INSTANCE = instance
                 // return instance
                 instance

@@ -42,7 +42,7 @@ import kotlin.math.roundToInt
 @Composable
 fun DeteilPage(userCardViewModel: UserCardViewModel) {
     val viewModel: UiModel = viewModel()
-    viewModel.SetSecBackground(background = R.drawable.pattern_2)
+    viewModel.SetSecBackground(background = R.drawable._e826ba47840c0723c356ce92e6d8b39)
 
     Column(modifier = Modifier
         .fillMaxWidth()

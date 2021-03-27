@@ -21,9 +21,8 @@ import com.example.fragmentsofmemory.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
 
+ //   private val drawerItemsViewModel by viewModels<DrawerItemsViewModel>()
     private val userCardViewModel by viewModels<UserCardViewModel>()
-
-    private val drawerItemsViewModel by viewModels<DrawerItemsViewModel>()
 
     private val userInfoViewModel by viewModels<UserInfoViewModel>()
 
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme(viewModel) {
-                HomePageEntrances(userCardViewModel, drawerItemsViewModel, userInfoViewModel)
+                HomePageEntrances(userCardViewModel, userInfoViewModel)
                 AddingPage(userCardViewModel)
                 dialogViewModel.PopUpAlertDialog()
                 ReadingFragments(userInfoViewModel, userCardViewModel)

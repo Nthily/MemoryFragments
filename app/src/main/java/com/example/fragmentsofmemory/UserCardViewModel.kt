@@ -10,10 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
+import com.example.fragmentsofmemory.Database.DrawerItems
 import com.example.fragmentsofmemory.Database.UserCard
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class UserCardViewModel(application: Application): AndroidViewModel(application){
@@ -24,9 +23,12 @@ class UserCardViewModel(application: Application): AndroidViewModel(application)
         AppDatabase::class.java, "database-cardContent"
     ).build()*/
 
-    private val db by lazy{AppDatabase.getDatabase(application)}
+    private val db by lazy{AppDatabase.getDatabase(application, CoroutineScope(SupervisorJob()))}
 
     var allCards: LiveData<List<UserCard>> = db.notes().getAll()
+    var cardNum: LiveData<List<Pair<Int, Int>>> = db.notes().searchCardNum()
+
+    var drawer: LiveData<List<DrawerItems>> = db.getDrawer().getAll()
 //    var allDrawerItems by mutableStateOf(listOf<DrawerCard>())
     /*
     init {
@@ -46,22 +48,28 @@ class UserCardViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun AddDataBase(userContent: String, time:String) {
+    fun addDataBase(userContent: String, time:String, did:Int) {
         viewModelScope.launch(Dispatchers.IO){
-            val cardObj = UserCard(0, userContent, time)
+           val cardObj = UserCard(0, did, userContent, time)
             db.notes().insert(cardObj)
         }
     }
 
-    fun RemoveDataBase(id:Int) {
+    fun addCategoryDataBase(name:String) {
+        viewModelScope.launch(Dispatchers.IO){
+            db.getDrawer().insert(DrawerItems(0, name))
+        }
+    }
+
+    fun removeDataBase(id:Int) {
         viewModelScope.launch(Dispatchers.IO){
             db.notes().delete(id)
         }
     }
 
-    fun UpdateCardMsg(id: Int, content:String, time:String) {
+    fun UpdateCardMsg(id: Int, content:String, time:String, did:Int) {
         viewModelScope.launch(Dispatchers.IO){
-            db.notes().update(UserCard(id, content, time))
+            db.notes().update(UserCard(id, did, content, time))
         }
     }
 
