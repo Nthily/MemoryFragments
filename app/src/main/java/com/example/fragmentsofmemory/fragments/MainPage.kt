@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fragmentsofmemory.*
+import com.example.fragmentsofmemory.Database.CategoryCardCount
 import com.example.fragmentsofmemory.Database.DrawerItems
 import com.example.fragmentsofmemory.Database.UserCard
 import com.example.fragmentsofmemory.Database.UserInfo
@@ -279,7 +280,7 @@ fun HomePageEntrances(userCardViewModel: UserCardViewModel,
     val userCardvalue: List<UserCard>? by userCardViewModel.allCards.observeAsState()
     val userInfovalue: List<UserInfo>? by userInfoViewModel.userInfo.observeAsState()
 
-    val userCategoryNum: List<Pair<Int, Int>>? by userCardViewModel.cardNum.observeAsState()
+    val userCategoryNum: List<CategoryCardCount>? by userCardViewModel.cardNum.observeAsState()
 
     val drawerItems: List<DrawerItems>? by userCardViewModel.drawer.observeAsState()
 
@@ -312,18 +313,16 @@ fun HomePageEntrances(userCardViewModel: UserCardViewModel,
         //   bottomBar = { BottomApps() },
         drawerContent = {
             drawerItems?.let {
-                userCategoryNum?.let { it1 ->
-                    DisplayDrawerContent(
-                        viewModel = viewModel,
-                        scaffoldState = scaffoldState,
-                        scope = scope,
-                        userCardViewModel = userCardViewModel,
-                        categoryNum = it1,
-                        drawerItems = drawerItems!!
-                    )
-                }
+                DisplayDrawerContent(
+                    viewModel = viewModel,
+                    scaffoldState = scaffoldState,
+                    scope = scope,
+                    userCardViewModel = userCardViewModel,
+                    categoryNum = userCategoryNum,
+                    drawerItems = it
+                )
             }
-                },
+        },
         scaffoldState = scaffoldState,
         topBar = {
             TopBar(scaffoldState, scope)

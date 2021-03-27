@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
+import com.example.fragmentsofmemory.Database.CategoryCardCount
 import com.example.fragmentsofmemory.Database.DrawerItems
 import com.example.fragmentsofmemory.Database.UserCard
 import kotlinx.coroutines.*
@@ -26,7 +27,7 @@ class UserCardViewModel(application: Application): AndroidViewModel(application)
     private val db by lazy{AppDatabase.getDatabase(application, CoroutineScope(SupervisorJob()))}
 
     var allCards: LiveData<List<UserCard>> = db.notes().getAll()
-    var cardNum: LiveData<List<Pair<Int, Int>>> = db.notes().searchCardNum()
+    var cardNum: LiveData<List<CategoryCardCount>> = db.notes().searchCardNum()
 
     var drawer: LiveData<List<DrawerItems>> = db.getDrawer().getAll()
 //    var allDrawerItems by mutableStateOf(listOf<DrawerCard>())

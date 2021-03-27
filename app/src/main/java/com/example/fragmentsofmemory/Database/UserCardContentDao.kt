@@ -21,7 +21,7 @@ interface UserCardContentDao {
     @Update
     fun update(note: UserCard)
 
-    @Query("select DrawerItems.uid as uid, count(UserCard.categoryID) as count from DrawerItems left join UserCard on DrawerItems.uid = UserCard.categoryID group by DrawerItems.uid")
-    fun searchCardNum(): LiveData<List<Pair<Int, Int>>>
+    @Query("select DrawerItems.uid as categoryID, count(UserCard.categoryID) as count from DrawerItems left join UserCard on DrawerItems.uid = UserCard.categoryID group by DrawerItems.uid")
+    fun searchCardNum(): LiveData<List<CategoryCardCount>>
 
 }

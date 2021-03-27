@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fragmentsofmemory.Database.CategoryCardCount
 import com.example.fragmentsofmemory.Database.DrawerItems
 import com.example.fragmentsofmemory.R
 import com.example.fragmentsofmemory.UiModel
@@ -36,7 +37,7 @@ fun DrawerInfo(items: List<DrawerItems>,
                scaffoldState: ScaffoldState,
                scope: CoroutineScope,
                userCardViewModel: UserCardViewModel,
-               categoryItems: List<Pair<Int,Int>>) {
+               categoryItems: List<CategoryCardCount>) {
 
     val viewModel: UiModel = viewModel()
 
@@ -116,7 +117,7 @@ fun DrawerInfo(items: List<DrawerItems>,
                                 color = (Color(208,207,209)),
                             ){
 
-                                Text(text =  "${categoryItems[it].second}",
+                                Text(text =  "${categoryItems[it].count}",
                                     modifier = Modifier.padding(start = 5.dp, end = 5.dp),
                                     style = androidx.compose.ui.text.TextStyle(
                                     fontWeight = FontWeight.Medium,
@@ -154,18 +155,21 @@ fun DrawerInfo(items: List<DrawerItems>,
 
 
 @Composable
-fun DisplayDrawerContent(viewModel:UiModel,
-                         scaffoldState: ScaffoldState,
-                         scope: CoroutineScope,
-                         userCardViewModel: UserCardViewModel,
-                         categoryNum: List<Pair<Int,Int>>,
-                         drawerItems: List<DrawerItems>) {
+fun DisplayDrawerContent(
+    viewModel:UiModel,
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope,
+    userCardViewModel: UserCardViewModel,
+    categoryNum: List<CategoryCardCount>?,
+    drawerItems: List<DrawerItems>) {
     MyTheme(viewModel = viewModel) {
 
     //    val drawerItems: List<DrawerItems>? by userCardViewModel.drawer.observeAsState()
 
 
-        DrawerInfo(drawerItems, scaffoldState, scope, userCardViewModel, categoryNum)
+        if (categoryNum != null) {
+            DrawerInfo(drawerItems, scaffoldState, scope, userCardViewModel, categoryNum)
+        }
 
         if(viewModel.requestCloseDrawerPage) {
             scope.launch {
