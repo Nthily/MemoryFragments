@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                 dialogViewModel.PopUpAlertDialog()
                 dialogViewModel.PopUpAlertDialogDrawerItems(userCardViewModel)
                 ReadingFragments(userInfoViewModel, userCardViewModel)
-                Material()
+                timePicker()
             }
         }
     }
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun Material(){
+    fun timePicker(){
         if(viewModel.timing) {
             MaterialDialog(this).show {
                 datePicker { dialog, date ->

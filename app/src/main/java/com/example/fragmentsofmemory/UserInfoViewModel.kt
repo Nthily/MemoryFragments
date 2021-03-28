@@ -37,7 +37,7 @@ class UserInfoViewModel(application: Application): AndroidViewModel(application)
     }
 
     private fun initUserInfo() {
-        val cardObj = UserInfo((System.currentTimeMillis() % Int.MAX_VALUE).toInt(), "香辣鸡腿堡", R.drawable.qq20210315211722)
+        val cardObj = UserInfo((System.currentTimeMillis() % Int.MAX_VALUE).toInt(), "Nthily", R.drawable.qq20210315211722)
         if(userInfo.value?.isEmpty() == true){
             viewModelScope.launch(Dispatchers.Main) {
                 userInfo.value = listOf(cardObj)

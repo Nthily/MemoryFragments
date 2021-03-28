@@ -1,5 +1,10 @@
 package com.example.fragmentsofmemory.fragments
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,8 +16,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Bookmark
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,11 +32,22 @@ import com.example.fragmentsofmemory.UiModel
 import com.example.fragmentsofmemory.UserCardViewModel
 import com.example.fragmentsofmemory.ui.theme.MyTheme
 
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.padding
 
+import androidx.compose.material.Icon
 
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.Text
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.rememberDismissState
+import androidx.compose.runtime.*
+import androidx.compose.ui.unit.IntOffset
+import kotlin.math.roundToInt
+
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun DrawerInfo(items: List<DrawerItems>,
@@ -82,68 +96,111 @@ fun DrawerInfo(items: List<DrawerItems>,
                 if (viewModel.lightTheme) Color.White else Color(0xFF1C242F)
             )
     ) {
-        val width = 96.dp
-        val squareSize = 48.dp
 
-        val swipeableState = rememberSwipeableState(1)
-        val sizePx = with(LocalDensity.current) { squareSize.toPx() }
-        val anchors = mapOf(0f to 0, sizePx to 1)
 
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
             items(items.size) {
-                Column(
-                    modifier = Modifier
-                        .swipeable(
-                            state = swipeableState,
-                            anchors = anchors,
-                            thresholds = { from, to -> FractionalThreshold(0.3f) },
-                            orientation = Orientation.Horizontal
-                        )
-                        .clickable {
-                            viewModel.currentCategory = items[it].uid
-                            viewModel.selectedItems = items[it].uid
-                            scope.launch {
-                                scaffoldState.drawerState.close()
-                                scaffoldState.drawerState.overflow
-                            }
-                        }
-                        .background(if (items[it].uid != viewModel.selectedItems) MaterialTheme.colors.surface else MaterialTheme.colors.primary)
-                ){
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                val squareSize = 96.dp
+
+                var swipeableState = rememberSwipeableState(0) //控制是否弹出, 1 为弹出
+
+                val sizePx = with(LocalDensity.current) { squareSize.toPx() }
+                val anchors = mapOf(0f to 0, sizePx to -1)
+
+                var editable by remember { mutableStateOf(false) }
+
+                editable = swipeableState.targetValue == -1
+
+                Box{
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ){
-                        Icon(Icons.Rounded.Bookmark, contentDescription = null, modifier = Modifier.padding(5.dp))
-                        Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                        Text(text = items[it].drawerItems, style = MaterialTheme.typography.body2, fontWeight = FontWeight.W600, modifier = Modifier.padding(6.dp))
-                        // Spacer(modifier = Modifier.padding(vertical = 5.dp))
-                        Column(
+                            .swipeable(
+                                state = swipeableState,
+                                anchors = anchors,
+                                thresholds = { from, to -> FractionalThreshold(-3f) },
+                                orientation = Orientation.Horizontal,
+                            )
+                            .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0)}
+
+                            .clickable {
+                                viewModel.currentCategory = items[it].uid
+                                viewModel.selectedItems = items[it].uid
+                                scope.launch {
+                                    scaffoldState.drawerState.close()
+                                    scaffoldState.drawerState.overflow
+                                }
+                            }
+                            .background(if (items[it].uid != viewModel.selectedItems) MaterialTheme.colors.surface else MaterialTheme.colors.primary)
+                    ) {
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(end = 5.dp),
-                            horizontalAlignment = Alignment.End
+                                .padding(8.dp)
                         ) {
-                            Surface(
-                                shape = CircleShape,
-                                color = (Color(208,207,209)),
-                            ){
 
-                                Text(text =  "${categoryItems[it].count}",
-                                    modifier = Modifier.padding(start = 6.dp, end = 6.dp, top = 2.dp, bottom = 2.dp),
-                                    style = androidx.compose.ui.text.TextStyle(
-                                    fontWeight = FontWeight.W900,
-                                    fontSize = 12.sp,
-                                    letterSpacing = 0.15.sp,
-                                    color = Color.White
-                                ))
+                            Icon(
+                                Icons.Rounded.Bookmark,
+                                contentDescription = null,
+                                modifier = Modifier.padding(5.dp)
+                            )
+                            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                            Text(
+                                text = items[it].drawerItems,
+                                style = MaterialTheme.typography.body2,
+                                fontWeight = FontWeight.W600,
+                                modifier = Modifier.padding(6.dp)
+                            )
+                            // Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(end = 5.dp),
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = (Color(208, 207, 209)),
+                                ) {
+
+                                    Text(
+                                        text = "${categoryItems[it].count}",
+                                        modifier = Modifier.padding(
+                                            start = 6.dp,
+                                            end = 6.dp,
+                                            top = 2.dp,
+                                            bottom = 2.dp
+                                        ),
+                                        style = androidx.compose.ui.text.TextStyle(
+                                            fontWeight = FontWeight.W900,
+                                            fontSize = 12.sp,
+                                            letterSpacing = 0.15.sp,
+                                            color = Color.White
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    androidx.compose.animation.AnimatedVisibility(visible = editable) {
+                        Row(
+                            modifier = Modifier.fillMaxHeight()
+                        ){
+                            IconButton(onClick = {}) {
+                                Icon(Icons.Rounded.Delete, contentDescription = null)
+                            }
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(Icons.Rounded.Edit, contentDescription = null)
                             }
                         }
                     }
                 }
+
+
             }
         }
      //   Spacer(modifier = Modifier.padding(vertical = 5.dp))
@@ -155,8 +212,8 @@ fun DrawerInfo(items: List<DrawerItems>,
         Row(
             modifier = Modifier
                 .clickable {
-                 //   drawerItemsViewModel.addDrawerItemsDatabase("我asdasd是憨批")
-                 //   userCardViewModel.addCategoryDataBase("你好呀")
+                    //   drawerItemsViewModel.addDrawerItemsDatabase("我asdasd是憨批")
+                    //   userCardViewModel.addCategoryDataBase("你好呀")
                     viewModel.addNewCategory = true
                 }
                 .padding(8.dp)
@@ -170,6 +227,7 @@ fun DrawerInfo(items: List<DrawerItems>,
 }
 
 
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun DisplayDrawerContent(

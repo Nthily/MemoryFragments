@@ -29,9 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
                     val Drawer = database.getDrawer()
 
                     Drawer.insert(DrawerItems(0, "Home"))
-                    Drawer.insert(DrawerItems(0, "一个憨批创建的 flag"))
-                    dao.insert(UserCard(0, 1, "你好呀这是一个留言", "test"))
-                    dao.insert(UserCard(0, 2, "您的 flag is clone", "test"))
+                    dao.insert(UserCard(0, 1, "Hello World", "2021.3.28"))
                 }
             }
         }

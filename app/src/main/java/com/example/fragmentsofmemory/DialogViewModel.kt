@@ -124,7 +124,7 @@ class DialogViewModel: ViewModel() {
 
         if(viewModel.addNewCategory) {
             AlertDialog(
-                modifier = Modifier.height(200.dp),
+
                 onDismissRequest = {
                     // Dismiss the dialog when the user clicks outside the dialog or on the back
                     // button. If you want to disable that functionality, simply use an empty
@@ -135,14 +135,13 @@ class DialogViewModel: ViewModel() {
                     Text(text = "输入喜欢的分类名字吧~")
                 },
                 text = {
-                       Box(){
-
+                       Column(modifier = Modifier.padding(top = 10.dp)) {
                            TextField(value = viewModel.categoryName, onValueChange = {
                                viewModel.categoryName = it
                            },
-                                  colors = TextFieldDefaults.textFieldColors(
-                                  backgroundColor = Color(255, 255, 255, 1)),
-                                  textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.W900),
+                               colors = TextFieldDefaults.textFieldColors(
+                                   backgroundColor = Color(255, 255, 255, 1)),
+                               textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.W900),
 
                                singleLine = true, leadingIcon = {
                                    IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(20.dp)) {
