@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
                 HomePageEntrances(userCardViewModel, userInfoViewModel)
                 AddingPage(userCardViewModel)
                 dialogViewModel.PopUpAlertDialog()
+                dialogViewModel.PopUpAlertDialogDrawerItems(userCardViewModel)
                 ReadingFragments(userInfoViewModel, userCardViewModel)
                 Material()
             }

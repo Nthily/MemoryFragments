@@ -141,7 +141,8 @@ fun DrawerInfo(items: List<DrawerItems>,
             modifier = Modifier
                 .clickable {
                  //   drawerItemsViewModel.addDrawerItemsDatabase("我asdasd是憨批")
-                    userCardViewModel.addCategoryDataBase("你好呀")
+                 //   userCardViewModel.addCategoryDataBase("你好呀")
+                    viewModel.addNewCategory = true
                 }
                 .padding(8.dp)
                 .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
