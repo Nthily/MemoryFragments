@@ -110,7 +110,6 @@ fun DrawerInfo(items: List<DrawerItems>,
 
                 var editable by remember { mutableStateOf(false) }
 
-                Log.d(TAG, "WTF + ${swipeableState.direction}")
                 editable = swipeableState.targetValue == -1
 
                 Box{
@@ -121,17 +120,19 @@ fun DrawerInfo(items: List<DrawerItems>,
                                 anchors = anchors,
                                 thresholds = { from, to -> FractionalThreshold(0.3f) },
                                 orientation = Orientation.Horizontal,
-                                reverseDirection = true
+                                reverseDirection = true,
                             )
                             .offset { IntOffset(-swipeableState.offset.value.roundToInt(), 0)}
 
                             .clickable {
                                 viewModel.currentCategory = items[it].uid
                                 viewModel.selectedItems = items[it].uid
+                             //   if(swipeableState.targetValue == -1) swipeableState.targetValue = 0
+                                /*
                                 scope.launch {
                                     scaffoldState.drawerState.close()
                                     scaffoldState.drawerState.overflow
-                                }
+                                }*/
                             }
                             .background(if (items[it].uid != viewModel.selectedItems) MaterialTheme.colors.surface else MaterialTheme.colors.primary)
                     ) {
@@ -192,10 +193,13 @@ fun DrawerInfo(items: List<DrawerItems>,
                             Row(
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ){
-                                IconButton(onClick = { /*TODO*/ }, modifier = Modifier.background(Color(0xFF7F849F)).padding(1.dp)) {
+                                IconButton(onClick = {
+                                }, modifier = Modifier.background(Color(0xFF7F849F)).padding(1.dp)) {
                                     Icon(Icons.Rounded.Edit, contentDescription = null)
                                 }
-                                IconButton(onClick = {}, modifier = Modifier.background(Color(0xFFE65B65)).padding(1.dp)) {
+                                IconButton(onClick = {
+                                    userCardViewModel.deleteCategoryDataBase(items[it].uid)
+                                }, modifier = Modifier.background(Color(0xFFE65B65)).padding(1.dp)) {
                                     Icon(Icons.Rounded.Delete, contentDescription = null)
                                 }
                             }

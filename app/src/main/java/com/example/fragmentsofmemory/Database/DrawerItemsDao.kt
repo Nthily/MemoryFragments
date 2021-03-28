@@ -15,6 +15,6 @@ interface DrawerItemsDao {
     @Insert
     fun insert(note: DrawerItems)
 
-    @Delete
-    fun delete(note: DrawerItems)
+    @Query("DELETE FROM DrawerItems WHERE uid = :idx")
+    fun delete(idx: Int)
 }

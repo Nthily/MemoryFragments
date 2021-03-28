@@ -54,6 +54,7 @@ class UiModel: ViewModel(){
     var addNewCategory by mutableStateOf(false)
     var categoryName by mutableStateOf("")
 
+
     fun endReading() {
         reading = false
         maining = true

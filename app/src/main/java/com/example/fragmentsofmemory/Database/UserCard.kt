@@ -1,13 +1,13 @@
 package com.example.fragmentsofmemory.Database
 
-import android.media.Image
 import androidx.room.*
+import androidx.room.ForeignKey.CASCADE
 
 
 @Entity(
     foreignKeys = [ForeignKey(entity = DrawerItems::class,
         parentColumns = ["uid"],
-        childColumns = ["categoryID"])]
+        childColumns = ["categoryID"], onDelete = CASCADE)]
 )
 data class UserCard(
     @PrimaryKey(autoGenerate = true) val id: Int,
