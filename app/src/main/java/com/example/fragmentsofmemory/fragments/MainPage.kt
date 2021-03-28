@@ -167,12 +167,14 @@ fun AlertNoCard() {
 @Composable
 fun ShowAllCards(items: List<UserCard>,
                  userNameitems: List<UserInfo>,
-                 userCardViewModel: UserCardViewModel) {
+                 userCardViewModel: UserCardViewModel,
+                 categoryNum: List<CategoryCardCount>?) {
 
   //  Log.d(ContentValues.TAG, "Hello ${items.size}")
 
     val viewModel: UiModel = viewModel()
     Column(modifier = Modifier.fillMaxHeight()) {
+
         LazyColumn(
             modifier = Modifier
                 .weight(1f),
@@ -292,7 +294,8 @@ fun HomePageEntrances(userCardViewModel: UserCardViewModel,
             userCardvalue?.let { it1 ->
                 userInfovalue?.let { it2 ->
                 ShowAllCards(items = it1,
-                    it2, userCardViewModel)
+                    it2, userCardViewModel,
+                    userCategoryNum)
             } }
 
        //    ShowAllCards(items = userCardViewModel.allCards, scaffoldState = scaffoldState, scope = scope, userInfoViewModel)
