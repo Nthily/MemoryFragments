@@ -188,14 +188,14 @@ fun DrawerInfo(items: List<DrawerItems>,
                     }
 
                     androidx.compose.animation.AnimatedVisibility(visible = editable) {
-                        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
+                        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(), horizontalAlignment = Alignment.End) {
                             Row(
-                                modifier = Modifier.fillMaxHeight()
+                                horizontalArrangement = Arrangement.SpaceEvenly
                             ){
-                                IconButton(onClick = { /*TODO*/ }, modifier = Modifier.background(Color(0xFF7F849F))) {
+                                IconButton(onClick = { /*TODO*/ }, modifier = Modifier.background(Color(0xFF7F849F)).padding(1.dp)) {
                                     Icon(Icons.Rounded.Edit, contentDescription = null)
                                 }
-                                IconButton(onClick = {}, modifier = Modifier.background(Color(0xFFE65B65))) {
+                                IconButton(onClick = {}, modifier = Modifier.background(Color(0xFFE65B65)).padding(1.dp)) {
                                     Icon(Icons.Rounded.Delete, contentDescription = null)
                                 }
                             }
