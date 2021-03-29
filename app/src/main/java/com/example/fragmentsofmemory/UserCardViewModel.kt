@@ -67,12 +67,12 @@ class UserCardViewModel(application: Application): AndroidViewModel(application)
             db.getDrawer().delete(uid)
         }
     }
-/*
-    fun updateCategoryDataBaseName(uid:Int) {
+
+    fun updateCategoryDataBaseName(uid:Int, name:String) {
         viewModelScope.launch(Dispatchers.IO){
-            db.getDrawer().update(uid)
+            db.getDrawer().update(DrawerItems(uid, name))
         }
-    }*/
+    }
 
     fun removeDataBase(id:Int) {
         viewModelScope.launch(Dispatchers.IO){

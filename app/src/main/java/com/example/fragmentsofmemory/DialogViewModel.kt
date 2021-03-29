@@ -163,9 +163,10 @@ class DialogViewModel: ViewModel() {
                             }
 
                             if(viewModel.editingCategory){
-                             //   Log.d(ContentValues.TAG, "uid + ${viewModel.editingCategoryUid} \n name + ${viewModel.editingCategoryName}")
-                             //   userCardViewModel.updateCategoryDataBaseName(viewModel.editingCategoryUid)
+
+                                userCardViewModel.updateCategoryDataBaseName(viewModel.editingCategoryUid, viewModel.categoryName)
                                 viewModel.editingCategory = false
+                                viewModel.categoryName = ""
                             }
                         }
                     ) {
@@ -177,6 +178,7 @@ class DialogViewModel: ViewModel() {
                         onClick = {
                             viewModel.addNewCategory = false
                             viewModel.categoryName = ""
+                            viewModel.editingCategory = false
                         }
                     ) {
                         Text("取消")

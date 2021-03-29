@@ -15,7 +15,8 @@ interface DrawerItemsDao {
     @Query("DELETE FROM DrawerItems WHERE uid = :idx")
     fun delete(idx: Int)
 
-    /*
+
     @Update
-    fun update(uid: Int)*/
+    fun update(drawer: DrawerItems)
+
 }

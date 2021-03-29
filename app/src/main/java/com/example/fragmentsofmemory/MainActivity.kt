@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun timePicker(){
+    private fun timePicker(){
         if(viewModel.timing) {
             MaterialDialog(this).show {
                 datePicker { dialog, date ->

@@ -68,7 +68,9 @@ fun DrawerInfo(items: List<DrawerItems>,
             Row(modifier = Modifier.padding(start = 15.dp, top = 15.dp)){
                 Surface(
                     modifier = Modifier
-                        .size(70.dp),
+                        .size(70.dp).clickable{
+
+                        },
                     shape = CircleShape
                 ) {
                     Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
@@ -150,6 +152,7 @@ fun DrawerInfo(items: List<DrawerItems>,
                             .clickable {
                                 viewModel.currentCategory = items[it].uid
                                 viewModel.selectedItems = items[it].uid
+                                viewModel.requestCloseDrawer = true
                                 //   if(swipeableState.targetValue == -1) swipeableState.targetValue = 0
                                 /*
                                 scope.launch {
@@ -223,8 +226,7 @@ fun DrawerInfo(items: List<DrawerItems>,
                                     viewModel.editingCategory = true
                                     viewModel.editingCategoryUid = items[it].uid
 
-                                  //  viewModel.editingCategoryName = items[it].drawerItems
-                                   // Log.d(TAG, "uid + ${viewModel.editingCategoryUid} \n name + ${viewModel.editingCategoryName}")
+                                 //   Log.d(TAG, "uid + ${viewModel.editingCategoryUid} \n name + ${viewModel.editingCategoryName}")
                                 }, modifier = Modifier
                                     .background(Color(0xFF7F849F))
                                     .padding(1.dp)) {
