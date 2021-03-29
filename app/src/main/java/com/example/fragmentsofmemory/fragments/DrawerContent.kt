@@ -130,7 +130,7 @@ fun DrawerInfo(items: List<DrawerItems>,
 
 
 
-                Box{
+                Box(){
                     Column(
                         modifier = Modifier
                             .swipeable(
@@ -258,6 +258,7 @@ fun DrawerInfo(items: List<DrawerItems>,
                     //   drawerItemsViewModel.addDrawerItemsDatabase("我asdasd是憨批")
                     //   userCardViewModel.addCategoryDataBase("你好呀")
                     viewModel.addNewCategory = true
+                    viewModel.requestCloseDrawer = true
                 }
                 .padding(8.dp)
                 .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically

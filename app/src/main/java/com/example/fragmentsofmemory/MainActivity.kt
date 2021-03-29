@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         when(true){
             (viewModel.adding && viewModel.textModify != "") -> dialogViewModel.openDialog = true
             viewModel.adding -> viewModel.endAddPage()
-            viewModel.draweringPage -> viewModel.requestCloseDrawerPage = true
+            viewModel.draweringPage -> viewModel.closeDrawerContent()
             viewModel.reading -> viewModel.endReading()
             else -> super.onBackPressed()
         }

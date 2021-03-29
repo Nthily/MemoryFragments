@@ -114,4 +114,9 @@ class UiModel: ViewModel(){
         textModify = ""
     }
 
+
+    fun closeDrawerContent() {
+        requestCloseDrawerPage = true
+        requestCloseDrawer = true
+    }
 }
