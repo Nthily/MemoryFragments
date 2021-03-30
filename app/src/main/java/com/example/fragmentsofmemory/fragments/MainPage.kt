@@ -1,5 +1,9 @@
 package com.example.fragmentsofmemory.fragments
 
+import android.graphics.Bitmap
+import androidx.activity.compose.registerForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -12,14 +16,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -252,6 +255,7 @@ fun TopBar(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 @Composable
 fun HomePageEntrances(userCardViewModel: UserCardViewModel,
                         userInfoViewModel: UserInfoViewModel) {
+
 
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()

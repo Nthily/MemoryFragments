@@ -1,5 +1,6 @@
 package com.example.fragmentsofmemory.Database
 
+import android.graphics.Bitmap
 import android.media.Image
 import androidx.room.ColumnInfo
 import androidx.room.Entity

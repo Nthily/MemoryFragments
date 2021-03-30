@@ -1,10 +1,22 @@
 package com.example.fragmentsofmemory.fragments
 
+import android.app.Activity
 import android.content.ContentValues.TAG
+
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+
+import android.os.Bundle
+import android.os.Environment
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
+import android.widget.Toast
+import androidx.activity.compose.registerForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,22 +43,46 @@ import com.example.fragmentsofmemory.R
 import com.example.fragmentsofmemory.UiModel
 import com.example.fragmentsofmemory.UserCardViewModel
 import com.example.fragmentsofmemory.ui.theme.MyTheme
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.padding
-
 import androidx.compose.material.Icon
-
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
-import kotlinx.coroutines.Dispatchers
+import dev.chrisbanes.accompanist.glide.GlideImage
+import java.io.*
 import kotlin.math.roundToInt
+
+@Composable
+fun Diaplay() {
+    val context = LocalContext.current
+    val viewModel: UiModel = viewModel()
+    if (viewModel.imageUriState.value != null) {
+
+        val file = File(context.getExternalFilesDir(null), "picture.jpg")
+        try {
+
+            val getIS = context.contentResolver.openInputStream(viewModel.imageUriState.value!!)
+            val os = FileOutputStream(file)
+            val data = getIS?.available()?.let { byteArrayOf(it.toByte()) }
+            getIS?.read(data)
+            os.write(data)
+            getIS?.close()
+            os.close()
+            Toast.makeText(context, "上传图片成功", Toast.LENGTH_LONG).show()
+            viewModel.testt
+        } catch (e:IOException) {
+            Toast.makeText(context, "上传图片失败~", Toast.LENGTH_LONG).show()
+            Log.w("ExternalStorage", "Error writing $file", e);
+        }
+        GlideImage(data = "https://picsum.photos/300/300", fadeIn = true)
+        //  Log.d(TAG, "${Uri.parse(file.absolutePath)}")
+    }
+}
 
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
@@ -59,23 +95,53 @@ fun DrawerInfo(items: List<DrawerItems>,
 
     val viewModel: UiModel = viewModel()
 
+    val context = LocalContext.current
+
+    val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        viewModel.imageUriState.value = it
+        // Handle the returned Uri
+    }
+
+    if (viewModel.imageUriState.value != null) {
+        viewModel.testt = true
+    }
+
     Column(modifier = Modifier
         .fillMaxWidth()
         .background(if (viewModel.lightTheme) Color(90, 143, 185) else Color(35, 48, 64))
     ) {
         Column(modifier = Modifier.height(150.dp)
         ) {
+
+
             Row(modifier = Modifier.padding(start = 15.dp, top = 15.dp)){
                 Surface(
                     modifier = Modifier
-                        .size(70.dp).clickable{
+                        .size(70.dp)
+                        .clickable {
+                            getContent.launch("image/*")
+                            /*
+                            val sendIntent: Intent = Intent().apply {
+                                action = Intent.ACTION_PICK
+                                type = "image/*"
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, "选择一张图片作为头像吧~")
+                            //     startActivity(content, shareIntent, Bundle())
+                            startActivityForResult(context, shareIntent, 1, Bundle())
 
+                             */
+
+                             */
                         },
                     shape = CircleShape
                 ) {
-                    Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
+                    if(!viewModel.testt) Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
+                    else Diaplay()
+
                 }
                 Column(horizontalAlignment = Alignment.End, modifier = Modifier.fillMaxWidth()) {
+
                     CompositionLocalProvider(LocalContentColor provides Color.White) {
                         IconButton(onClick = {
                             viewModel.lightTheme = when(viewModel.lightTheme){
@@ -153,12 +219,8 @@ fun DrawerInfo(items: List<DrawerItems>,
                                 viewModel.currentCategory = items[it].uid
                                 viewModel.selectedItems = items[it].uid
                                 viewModel.requestCloseDrawer = true
-                                //   if(swipeableState.targetValue == -1) swipeableState.targetValue = 0
-                                /*
-                                scope.launch {
-                                    scaffoldState.drawerState.close()
-                                    scaffoldState.drawerState.overflow
-                                }*/
+                                //      viewModel.requestSelectPicture = true
+
                             }
                             .background(if (items[it].uid != viewModel.selectedItems) MaterialTheme.colors.surface else MaterialTheme.colors.primary)
                     ) {
@@ -257,8 +319,7 @@ fun DrawerInfo(items: List<DrawerItems>,
         Row(
             modifier = Modifier
                 .clickable {
-                    //   drawerItemsViewModel.addDrawerItemsDatabase("我asdasd是憨批")
-                    //   userCardViewModel.addCategoryDataBase("你好呀")
+
                     viewModel.addNewCategory = true
                     viewModel.requestCloseDrawer = true
                 }

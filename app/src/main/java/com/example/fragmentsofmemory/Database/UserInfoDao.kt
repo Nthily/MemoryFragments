@@ -11,4 +11,7 @@ interface UserInfoDao {
 
     @Insert
     fun insert(note: UserInfo)
+
+    @Update
+    fun update(note: UserInfo)
 }

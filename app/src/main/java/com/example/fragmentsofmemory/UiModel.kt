@@ -1,8 +1,12 @@
 package com.example.fragmentsofmemory
 
 import android.content.ContentValues
+import android.graphics.Bitmap
 import android.media.Image
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.registerForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -17,7 +21,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.fragmentsofmemory.ui.theme.MyTheme
-
+import androidx.activity.compose.registerForActivityResult
+import androidx.activity.result.launch
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 
 class UiModel: ViewModel(){
    // var theme by mutableStateOf(MyTheme.Theme.Dark)
@@ -60,6 +74,12 @@ class UiModel: ViewModel(){
     var editingCategory by mutableStateOf(false) //启用编辑分类状态
     var editingCategoryUid by mutableStateOf(0)
     var editingCategoryName by mutableStateOf("")
+
+    val imageUriState = mutableStateOf<Uri?>(null)
+
+    var testt by mutableStateOf(false)
+
+
 
     fun endReading() {
         reading = false
