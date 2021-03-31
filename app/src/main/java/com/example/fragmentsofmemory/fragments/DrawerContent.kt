@@ -1,5 +1,6 @@
 package com.example.fragmentsofmemory.fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues.TAG
 
@@ -53,33 +54,39 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
-import dev.chrisbanes.accompanist.glide.GlideImage
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.google.accompanist.glide.GlideImage
 import java.io.*
 import kotlin.math.roundToInt
 
 @Composable
-fun Diaplay() {
+fun Display() {
     val context = LocalContext.current
     val viewModel: UiModel = viewModel()
     if (viewModel.imageUriState.value != null) {
 
         val file = File(context.getExternalFilesDir(null), "picture.jpg")
         try {
-
             val getIS = context.contentResolver.openInputStream(viewModel.imageUriState.value!!)
             val os = FileOutputStream(file)
-            val data = getIS?.available()?.let { byteArrayOf(it.toByte()) }
-            getIS?.read(data)
+            val data = ByteArray(getIS!!.available())
+            getIS.read(data)
             os.write(data)
-            getIS?.close()
+            getIS.close()
             os.close()
-            Toast.makeText(context, "上传图片成功", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Upload successful", Toast.LENGTH_LONG).show()
             viewModel.testt
         } catch (e:IOException) {
-            Toast.makeText(context, "上传图片失败~", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
             Log.w("ExternalStorage", "Error writing $file", e);
         }
-        GlideImage(data = "https://picsum.photos/300/300", fadeIn = true)
+        GlideImage(data = Uri.fromFile(file), requestBuilder = {
+            val options = RequestOptions()
+            options.diskCacheStrategy(DiskCacheStrategy.NONE)
+            apply(options)
+        }, contentDescription = null)
+     //   GlideImage(data = "https://picsum.photos/300/300", contentDescription = null, fadeIn = true)
         //  Log.d(TAG, "${Uri.parse(file.absolutePath)}")
     }
 }
@@ -137,8 +144,7 @@ fun DrawerInfo(items: List<DrawerItems>,
                     shape = CircleShape
                 ) {
                     if(!viewModel.testt) Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
-                    else Diaplay()
-
+                    else Display()
                 }
                 Column(horizontalAlignment = Alignment.End, modifier = Modifier.fillMaxWidth()) {
 
@@ -334,6 +340,7 @@ fun DrawerInfo(items: List<DrawerItems>,
 }
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
