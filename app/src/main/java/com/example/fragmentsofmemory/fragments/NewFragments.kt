@@ -104,15 +104,6 @@ fun PageContent(viewModel: UiModel, file: File, context: Context) {
                 Row{
                     Button(onClick = {
                         viewModel.timing = true
-                        if(viewModel.timing) {
-                            MaterialDialog(context).show {
-                                datePicker { dialog, date ->
-                                    viewModel.timeResult = "${date.year}.${date.month + 1}.${date.dayOfMonth}"
-                                }
-                            }
-                        }
-                        viewModel.timing = false
-                        if(viewModel.timeResult != "")viewModel.selectedTime = true
                     }, colors = if(viewModel.timeResult != "") ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1DC792))
                     else ButtonDefaults.buttonColors(MaterialTheme.colors.primary), modifier = Modifier
                         .animateContentSize()

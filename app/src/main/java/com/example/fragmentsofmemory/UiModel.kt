@@ -139,8 +139,8 @@ class UiModel: ViewModel(){
 
 
     fun closeDrawerContent() {
-        requestCloseDrawerPage = true
-        requestCloseDrawer = true
+        requestCloseDrawerPage = true // 关闭 Drawer
+        requestCloseDrawer = true  //收起 DrawerItems 编辑和删除按钮
     }
 
     @Composable
