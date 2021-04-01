@@ -83,7 +83,6 @@ class Welcome : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        Log.d(TAG, "$viewModel")
         when(true){
             (viewModel.adding && viewModel.textModify != "") -> dialogViewModel.openDialog = true
             viewModel.adding -> viewModel.endAddPage()
