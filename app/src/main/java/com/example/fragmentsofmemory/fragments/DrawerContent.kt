@@ -45,6 +45,7 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.IntOffset
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -134,18 +135,26 @@ fun DrawerInfo(viewModel:UiModel,
 
                     CompositionLocalProvider(LocalContentColor provides Color.White) {
                         IconButton(onClick = {
-                            viewModel.lightTheme = when(viewModel.lightTheme){
-                                viewModel.lightTheme -> !viewModel.lightTheme
-                                else -> viewModel.lightTheme
-                            }
+
                         }) {
-                            Icon(painter = painterResource(id = R.drawable.dark_mode_24px), contentDescription = "")
+                            Icon(Icons.Rounded.Edit, contentDescription = "")
                         }
                     }
 
                 }
             }
-            Text(text = "Nthily", style = MaterialTheme.typography.body2, fontWeight = FontWeight.W900, modifier = Modifier.padding(start = 15.dp, top = 15.dp), color = Color.White)
+            Column() {
+                Text(text = "Nthily",
+                    style = MaterialTheme.typography.body2,
+                    fontWeight = FontWeight.W900,
+                    modifier = Modifier.padding(start = 15.dp, top = 15.dp),
+                    color = Color.White)
+                Text(text = "永远相信美好的事情即将发生",
+                    style = MaterialTheme.typography.overline,
+                    fontWeight = FontWeight.W900,
+                    modifier = Modifier.padding(start = 15.dp, top = 8.dp),
+                    color = Color.White)
+            }
         }
     }
     Column(
@@ -241,7 +250,6 @@ fun DrawerInfo(viewModel:UiModel,
                                     shape = CircleShape,
                                     color = (Color(208, 207, 209)),
                                 ) {
-
                                     Text(
                                         text = "${categoryItems[it].count}",
                                         modifier = Modifier.padding(

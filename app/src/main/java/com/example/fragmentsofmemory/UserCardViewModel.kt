@@ -13,16 +13,11 @@ import androidx.room.Room
 import com.example.fragmentsofmemory.Database.CategoryCardCount
 import com.example.fragmentsofmemory.Database.DrawerItems
 import com.example.fragmentsofmemory.Database.UserCard
+import com.example.fragmentsofmemory.Database.UserInfo
 import kotlinx.coroutines.*
 
 
 class UserCardViewModel(application: Application): AndroidViewModel(application){
-
-    /*
-    val db = Room.databaseBuilder(
-        application.applicationContext,
-        AppDatabase::class.java, "database-cardContent"
-    ).build()*/
 
     private val db by lazy{AppDatabase.getDatabase(application, CoroutineScope(SupervisorJob()))}
 
@@ -30,22 +25,12 @@ class UserCardViewModel(application: Application): AndroidViewModel(application)
     var cardNum: LiveData<List<CategoryCardCount>> = db.notes().searchCardNum()
 
     var drawer: LiveData<List<DrawerItems>> = db.getDrawer().getAll()
-//    var allDrawerItems by mutableStateOf(listOf<DrawerCard>())
-    /*
-    init {
-        GlobalScope.launch {
-            val items = db.notes().getAll()
-        //    val drawerItems = db.notes().getAllDrawerItems()
-            viewModelScope.launch() {
-                allCards = items
-         //       allDrawerItems = drawerItems
-            }
-        }
-    }*/
+
+    var userInfo: LiveData<List<UserInfo>> = db.getUserInfo().getAll()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-         //   allCards = db.notes().getAll()
+
         }
     }
 

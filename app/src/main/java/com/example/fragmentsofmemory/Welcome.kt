@@ -1,5 +1,6 @@
 package com.example.fragmentsofmemory
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.testing.FragmentScenario.Companion.launch
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
@@ -44,6 +46,7 @@ import com.example.fragmentsofmemory.fragments.ReadingFragments
 import com.example.fragmentsofmemory.fragments.popUpDrawer
 import com.example.fragmentsofmemory.ui.theme.MyTheme
 import com.google.accompanist.coil.CoilImage
+import kotlinx.coroutines.delay
 import java.io.File
 import java.util.Timer
 import kotlin.concurrent.schedule
@@ -51,7 +54,6 @@ import kotlin.concurrent.schedule
 class Welcome : AppCompatActivity() {
 
     private val userCardViewModel by viewModels<UserCardViewModel>()
-    private val userInfoViewModel by viewModels<UserInfoViewModel>()
     private val dialogViewModel:DialogViewModel by viewModels()
     private val viewModel:UiModel by viewModels()
 
@@ -65,15 +67,15 @@ class Welcome : AppCompatActivity() {
             val navController = rememberNavController()
 
                NavHost(navController, startDestination = "welcome") {
-                composable("welcome") { WelcomPage( viewModel, navController,file, context) }
+                composable("welcome") { WelcomePage( viewModel, navController,file, context) }
                 composable("mainPage") {
 
                     MyTheme(viewModel) {
-                        HomePageEntrances(viewModel, userCardViewModel, userInfoViewModel, file, context)
+                        HomePageEntrances(viewModel, userCardViewModel, file, context)
                         AddingPage(viewModel, userCardViewModel, file , context)
                         dialogViewModel.PopUpAlertDialog(viewModel)
                         dialogViewModel.PopUpAlertDialogDrawerItems(viewModel, userCardViewModel)
-                        ReadingFragments(viewModel, userInfoViewModel, userCardViewModel, file, context)
+                        ReadingFragments(viewModel, userCardViewModel, file, context)
                         timePicker()
                     }
                 }
@@ -106,59 +108,56 @@ class Welcome : AppCompatActivity() {
 
 @ExperimentalAnimationApi
 @Composable
-fun WelcomPage(viewModel:UiModel, navController: NavController, file:File, context: Context) {
+fun WelcomePage(viewModel:UiModel, navController: NavController, file:File, context: Context) {
+    Box{
+        Image(painter = painterResource(id = R.drawable.wel_bkg), contentDescription = null,modifier = Modifier
+            .fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
-    Column() {
-        Box{
-            Image(painter = painterResource(id = R.drawable.wel_bkg), contentDescription = null,modifier = Modifier
-                .fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            val textVisibility = remember{ mutableStateOf(false)}
 
-                val textVisibility = remember{ mutableStateOf(false)}
+            Spacer(modifier = Modifier.padding(vertical = 50.dp))
 
-                Spacer(modifier = Modifier.padding(vertical = 50.dp))
+            Timer("SettingUp", false).schedule(500) {
+                textVisibility.value = true
+            }
 
-                Timer("SettingUp", false).schedule(500) {
-                    textVisibility.value = true
+            AnimatedVisibility(visible = textVisibility.value) {
+                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Surface(
+                        shape = CircleShape,
+                        modifier = Modifier.size(130.dp)
+                    ) {
+                        viewModel.InitUserProfilePic(file = file, context = context)
+                    }
+                    Spacer(modifier = Modifier.padding(vertical = 30.dp))
+                    Text(text = "欢迎回家", fontWeight = FontWeight.W900, style = MaterialTheme.typography.h6)
                 }
 
-                AnimatedVisibility(visible = textVisibility.value) {
-                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Surface(
-                            shape = CircleShape,
-                            modifier = Modifier.size(130.dp)
-                        ) {
-                            viewModel.InitUserProfilePic(file = file, context = context)
-                        }
-                        Spacer(modifier = Modifier.padding(vertical = 30.dp))
-                        Text(text = "欢迎回家", fontWeight = FontWeight.W900, style = MaterialTheme.typography.h6)
-                    }
-
-                    Column(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        Text(text = "永远相信美好的事情即将发生",
-                            fontWeight = FontWeight.W500,
-                            style = MaterialTheme.typography.body2)
-                    }
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(text = "永远相信美好的事情即将发生",
+                        fontWeight = FontWeight.W500,
+                        style = MaterialTheme.typography.body2)
                 }
             }
         }
+    }
 
-        val delayedHandler = Handler()
-        delayedHandler.postDelayed({
-            navController.navigate("mainPage") {
-                popUpTo("welcome") { //删除 welcome 界面
-                    inclusive = true //关闭栈
-                }
+
+    LaunchedEffect(true){
+        delay(2000)
+        navController.navigate("mainPage") {
+            popUpTo("welcome") { //delete
+                inclusive = true //close stack
             }
-        }, 2000)
-
+        }
     }
 }
 

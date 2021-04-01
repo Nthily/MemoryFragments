@@ -3,7 +3,9 @@ package com.example.fragmentsofmemory
 import android.content.ContentValues
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
@@ -137,18 +139,24 @@ class DialogViewModel: ViewModel() {
                 },
                 text = {
                        Column(modifier = Modifier.padding(top = 10.dp)) {
-                           TextField(value = viewModel.categoryName, onValueChange = {
-                               viewModel.categoryName = it
-                           },
-                               colors = TextFieldDefaults.textFieldColors(
-                                   backgroundColor = Color(255, 255, 255, 1)),
-                               textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.W900),
+                           Row(){
+                               Surface(
+                                   shape = CircleShape,
+                                   color = (Color(208, 207, 209)),
+                                   modifier = Modifier.size(20.dp).clickable {
+                                   }.align(Alignment.CenterVertically)
+                               ) {
 
-                               singleLine = true, leadingIcon = {
-                                   IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(20.dp)) {
-                                       Icon(Icons.Rounded.Favorite, contentDescription = null)
-                                   }
-                               })
+                               }
+                               TextField(value = viewModel.categoryName, onValueChange = {
+                                   viewModel.categoryName = it
+                               },
+                                   colors = TextFieldDefaults.textFieldColors(
+                                       backgroundColor = Color(255, 255, 255, 1)),
+                                   textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.W900),
+
+                                   singleLine = true)
+                           }
                        }
                 },
                 confirmButton = {

@@ -182,7 +182,6 @@ fun ShowAllCards(viewModel: UiModel,
                  items: List<UserCard>,
                  userNameitems: List<UserInfo>,
                  userCardViewModel: UserCardViewModel,
-                 categoryNum: List<CategoryCardCount>?,
                  file: File,
                  context: Context) {
 
@@ -264,15 +263,14 @@ fun TopBar(viewModel: UiModel, scaffoldState: ScaffoldState, scope: CoroutineSco
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
-fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel,
-                        userInfoViewModel: UserInfoViewModel, file: File, context: Context) {
+fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel, file: File, context: Context) {
 
 
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
     val userCardvalue: List<UserCard>? by userCardViewModel.allCards.observeAsState()
-    val userInfovalue: List<UserInfo>? by userInfoViewModel.userInfo.observeAsState()
+    val userInfovalue: List<UserInfo>? by userCardViewModel.userInfo.observeAsState()
     val userCategoryNum: List<CategoryCardCount>? by userCardViewModel.cardNum.observeAsState()
     val drawerItems: List<DrawerItems>? by userCardViewModel.drawer.observeAsState()
 
@@ -286,7 +284,6 @@ fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel,
                 ShowAllCards(viewModel,
                     items = it1,
                     it2, userCardViewModel,
-                    userCategoryNum,
                     file,
                     context)
             } }

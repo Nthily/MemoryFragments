@@ -48,8 +48,6 @@ class MainActivity : AppCompatActivity() {
  //   private val drawerItemsViewModel by viewModels<DrawerItemsViewModel>()
     private val userCardViewModel by viewModels<UserCardViewModel>()
 
-    private val userInfoViewModel by viewModels<UserInfoViewModel>()
-
     private val dialogViewModel:DialogViewModel by viewModels()
     private val viewModel:UiModel by viewModels()
 

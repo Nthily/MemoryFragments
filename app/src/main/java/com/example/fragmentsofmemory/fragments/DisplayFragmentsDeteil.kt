@@ -1,42 +1,25 @@
 package com.example.fragmentsofmemory.fragments
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fragmentsofmemory.Database.UserCard
-import com.example.fragmentsofmemory.Database.UserInfo
 import com.example.fragmentsofmemory.R
 import com.example.fragmentsofmemory.UiModel
 import com.example.fragmentsofmemory.UserCardViewModel
-import com.example.fragmentsofmemory.UserInfoViewModel
 import java.io.File
-import kotlin.math.roundToInt
-
-
 
 
 @Composable
@@ -124,7 +107,7 @@ fun DeteilPage(viewModel: UiModel, userCardViewModel: UserCardViewModel, file: F
 }
 
 @Composable
-fun ReadingFragments(viewModel: UiModel, userInfoViewModel: UserInfoViewModel,
+fun ReadingFragments(viewModel: UiModel,
                      userCardViewModel: UserCardViewModel, file: File,context: Context) {
 
     val percentOffsetX = animateFloatAsState(if (viewModel.reading) 0f else 1f)
