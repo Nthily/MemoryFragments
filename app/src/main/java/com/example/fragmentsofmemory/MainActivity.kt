@@ -1,5 +1,6 @@
 package com.example.fragmentsofmemory
 
+import android.app.LauncherActivity
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -17,9 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 
@@ -34,12 +32,15 @@ import com.example.fragmentsofmemory.ui.theme.MyTheme
 import androidx.activity.compose.registerForActivityResult
 import androidx.activity.result.launch
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -53,23 +54,24 @@ class MainActivity : AppCompatActivity() {
     private val viewModel:UiModel by viewModels()
 
 
-
     @ExperimentalAnimationApi
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
+            val context = LocalContext.current
+            val file = File(context.getExternalFilesDir(null), "picture.jpg")
 
             MyTheme(viewModel) {
-
-                HomePageEntrances(userCardViewModel, userInfoViewModel)
-                AddingPage(userCardViewModel)
+                HomePageEntrances(userCardViewModel, userInfoViewModel, file, context)
+                AddingPage(userCardViewModel, file , context)
                 dialogViewModel.PopUpAlertDialog()
                 dialogViewModel.PopUpAlertDialogDrawerItems(userCardViewModel)
-                ReadingFragments(userInfoViewModel, userCardViewModel)
+                ReadingFragments(userInfoViewModel, userCardViewModel, file, context)
                 timePicker()
-
             }
+
         }
     }
 

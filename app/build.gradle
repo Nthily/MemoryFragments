@@ -118,5 +118,8 @@ dependencies {
     debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
 
     implementation 'com.google.accompanist:accompanist-glide:0.7.0'
+    implementation 'com.google.accompanist:accompanist-coil:0.7.0'
+
+    implementation "androidx.navigation:navigation-compose:1.0.0-alpha09"
 
 }

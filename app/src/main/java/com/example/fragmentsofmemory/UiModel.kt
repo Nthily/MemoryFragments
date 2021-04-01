@@ -1,6 +1,7 @@
 package com.example.fragmentsofmemory
 
 import android.content.ContentValues
+import android.content.Context
 import android.graphics.Bitmap
 import android.media.Image
 import android.net.Uri
@@ -32,6 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import coil.memory.MemoryCache
+import coil.request.ImageRequest
+import com.google.accompanist.coil.CoilImage
+import java.io.File
 
 class UiModel: ViewModel(){
    // var theme by mutableStateOf(MyTheme.Theme.Dark)
@@ -77,9 +82,6 @@ class UiModel: ViewModel(){
 
     val imageUriState = mutableStateOf<Uri?>(null)
 
-    var testt by mutableStateOf(false)
-
-
 
     fun endReading() {
         reading = false
@@ -102,7 +104,8 @@ class UiModel: ViewModel(){
     fun SetSecBackground(background: Int): Unit{
         return Image(painter = painterResource(id = background), contentDescription = null,
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .alpha(0.7f),
             contentScale = ContentScale.Crop)
     }
 
@@ -138,5 +141,14 @@ class UiModel: ViewModel(){
     fun closeDrawerContent() {
         requestCloseDrawerPage = true
         requestCloseDrawer = true
+    }
+
+    @Composable
+    fun InitUserProfilePic(file:File, context: Context) {
+        if(file.exists()){
+            CoilImage(Uri.fromFile(file), null, fadeIn = true)
+        } else {
+            Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
+        }
     }
 }

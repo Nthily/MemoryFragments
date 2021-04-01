@@ -1,22 +1,13 @@
 package com.example.fragmentsofmemory.fragments
-
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ContentValues.TAG
-
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.content.Context
 import android.net.Uri
-
-import android.os.Bundle
-import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.registerForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,44 +43,35 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.accompanist.coil.CoilImage
 import com.google.accompanist.glide.GlideImage
 import java.io.*
 import kotlin.math.roundToInt
 
-@Composable
-fun Display() {
-    val context = LocalContext.current
-    val viewModel: UiModel = viewModel()
-    if (viewModel.imageUriState.value != null) {
 
-        val file = File(context.getExternalFilesDir(null), "picture.jpg")
-        try {
-            val getIS = context.contentResolver.openInputStream(viewModel.imageUriState.value!!)
-            val os = FileOutputStream(file)
-            val data = ByteArray(getIS!!.available())
-            getIS.read(data)
-            os.write(data)
-            getIS.close()
-            os.close()
-            Toast.makeText(context, "Upload successful", Toast.LENGTH_LONG).show()
-            viewModel.testt
-        } catch (e:IOException) {
-            Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
-            Log.w("ExternalStorage", "Error writing $file", e);
-        }
-        GlideImage(data = Uri.fromFile(file), requestBuilder = {
-            val options = RequestOptions()
-            options.diskCacheStrategy(DiskCacheStrategy.NONE)
-            apply(options)
-        }, contentDescription = null)
-     //   GlideImage(data = "https://picsum.photos/300/300", contentDescription = null, fadeIn = true)
-        //  Log.d(TAG, "${Uri.parse(file.absolutePath)}")
+
+fun uploadPicture(file:File, context: Context, viewModel: UiModel) {
+    try {
+        val getIS = context.contentResolver.openInputStream(viewModel.imageUriState.value!!)
+        val os = FileOutputStream(file)
+        val data = ByteArray(getIS!!.available())
+        getIS.read(data)
+        os.write(data)
+        getIS.close()
+        os.close()
+        Toast.makeText(context, "更新头像成功，需要重启程序才能更新", Toast.LENGTH_LONG).show()
+    } catch (e:IOException) {
+        Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
+        Log.w("ExternalStorage", "Error writing $file", e);
     }
 }
+
+
 
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
@@ -98,19 +80,23 @@ fun DrawerInfo(items: List<DrawerItems>,
                scaffoldState: ScaffoldState,
                scope: CoroutineScope,
                userCardViewModel: UserCardViewModel,
-               categoryItems: List<CategoryCardCount>) {
+               categoryItems: List<CategoryCardCount>,
+               context: Context,
+               file:File) {
 
+  //  val context = LocalContext.current
     val viewModel: UiModel = viewModel()
-
-    val context = LocalContext.current
+  //  val file = File(context.getExternalFilesDir(null), "picture.jpg")
 
     val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) {
         viewModel.imageUriState.value = it
         // Handle the returned Uri
+
     }
 
     if (viewModel.imageUriState.value != null) {
-        viewModel.testt = true
+        uploadPicture(file, context, viewModel)
+        viewModel.imageUriState.value = null
     }
 
     Column(modifier = Modifier
@@ -120,9 +106,9 @@ fun DrawerInfo(items: List<DrawerItems>,
         Column(modifier = Modifier.height(150.dp)
         ) {
 
-
             Row(modifier = Modifier.padding(start = 15.dp, top = 15.dp)){
                 Surface(
+                    shape = CircleShape,
                     modifier = Modifier
                         .size(70.dp)
                         .clickable {
@@ -141,10 +127,8 @@ fun DrawerInfo(items: List<DrawerItems>,
 
                              */
                         },
-                    shape = CircleShape
                 ) {
-                    if(!viewModel.testt) Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
-                    else Display()
+                    viewModel.InitUserProfilePic(file = file, context = context)
                 }
                 Column(horizontalAlignment = Alignment.End, modifier = Modifier.fillMaxWidth()) {
 
@@ -167,11 +151,7 @@ fun DrawerInfo(items: List<DrawerItems>,
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                if (viewModel.lightTheme) Color.White else Color(0xFF1C242F)
-            )
     ) {
-
 
         LazyColumn(
             modifier = Modifier.weight(1f)
@@ -350,14 +330,15 @@ fun DisplayDrawerContent(
     scope: CoroutineScope,
     userCardViewModel: UserCardViewModel,
     categoryNum: List<CategoryCardCount>?,
-    drawerItems: List<DrawerItems>) {
+    drawerItems: List<DrawerItems>,
+    file: File,
+    context: Context) {
     MyTheme(viewModel = viewModel) {
 
     //    val drawerItems: List<DrawerItems>? by userCardViewModel.drawer.observeAsState()
 
-
         if (categoryNum != null) {
-            DrawerInfo(drawerItems, scaffoldState, scope, userCardViewModel, categoryNum)
+            DrawerInfo(drawerItems, scaffoldState, scope, userCardViewModel, categoryNum, context, file)
         }
 
         if(viewModel.requestCloseDrawerPage) {

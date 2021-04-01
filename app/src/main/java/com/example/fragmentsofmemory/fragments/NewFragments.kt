@@ -1,5 +1,6 @@
 package com.example.fragmentsofmemory.fragments
 
+import android.content.Context
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
@@ -41,6 +42,7 @@ import com.example.fragmentsofmemory.*
 import com.example.fragmentsofmemory.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.File
 
 var userContent = mutableStateOf("")
 
@@ -56,7 +58,7 @@ fun Modifier.percentOffsetX(percent: Float): Modifier =
 
 
 @Composable
-fun PageContent() {
+fun PageContent(file: File, context: Context) {
     val viewModel: UiModel = viewModel()
     viewModel.SetSecBackground(background = R.drawable._e826ba47840c0723c356ce92e6d8b39)
 
@@ -89,7 +91,8 @@ fun PageContent() {
                     .align(Alignment.CenterVertically),
                 shape = CircleShape
             ) {
-                Image(painter = painterResource(R.drawable.qq20210315211722), contentDescription = null)
+                viewModel.InitUserProfilePic(file = file, context = context)
+              //  Image(painter = painterResource(R.drawable.qq20210315211722), contentDescription = null)
             }
             Spacer(modifier = Modifier.padding(horizontal = 5.dp))
             Text(text = "记录点美好的东西吧~", style = MaterialTheme.typography.body2,
@@ -100,7 +103,9 @@ fun PageContent() {
                     Button(onClick = {
                         viewModel.timing = true
                     }, colors = if(viewModel.timeResult != "") ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1DC792))
-                    else ButtonDefaults.buttonColors(MaterialTheme.colors.primary), modifier = Modifier.animateContentSize().padding(5.dp)) {
+                    else ButtonDefaults.buttonColors(MaterialTheme.colors.primary), modifier = Modifier
+                        .animateContentSize()
+                        .padding(5.dp)) {
                         Text(if(viewModel.timeResult != "") "时间存储完毕！"
                         else "请选择记忆的时间吧~")
                     }
@@ -112,7 +117,7 @@ fun PageContent() {
 
 
 @Composable
-fun AddingPage(userCardViewModel: UserCardViewModel) {
+fun AddingPage(userCardViewModel: UserCardViewModel,file:File, context: Context) {
 
     val viewModel: UiModel = viewModel()
     val dialogViewModel: DialogViewModel = viewModel()
@@ -128,7 +133,7 @@ fun AddingPage(userCardViewModel: UserCardViewModel) {
 
         Scaffold(
             content = {
-                PageContent()
+                PageContent(file, context)
             },
 
             topBar = {
@@ -147,18 +152,18 @@ fun AddingPage(userCardViewModel: UserCardViewModel) {
                             .clickable(
                                 onClick = {
 
-                                    if(viewModel.editing) {
+                                    if (viewModel.editing) {
                                         userCardViewModel.UpdateCardMsg(
                                             viewModel.cardId,
                                             viewModel.textModify,
                                             viewModel.timeResult,
-                                            viewModel.currentCategory)
-                                    }
-                                    else {
+                                            viewModel.currentCategory
+                                        )
+                                    } else {
                                         userCardViewModel.addDataBase(
-                                        viewModel.textModify,
-                                        viewModel.timeResult,
-                                        viewModel.currentCategory
+                                            viewModel.textModify,
+                                            viewModel.timeResult,
+                                            viewModel.currentCategory
                                         )
                                     }
 

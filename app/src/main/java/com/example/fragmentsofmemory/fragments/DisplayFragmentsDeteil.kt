@@ -1,6 +1,7 @@
 package com.example.fragmentsofmemory.fragments
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -10,6 +11,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -31,15 +33,16 @@ import com.example.fragmentsofmemory.R
 import com.example.fragmentsofmemory.UiModel
 import com.example.fragmentsofmemory.UserCardViewModel
 import com.example.fragmentsofmemory.UserInfoViewModel
+import java.io.File
 import kotlin.math.roundToInt
 
 
 
 
 @Composable
-fun DeteilPage(userCardViewModel: UserCardViewModel) {
+fun DeteilPage(userCardViewModel: UserCardViewModel, file: File, context: Context) {
     val viewModel: UiModel = viewModel()
-    viewModel.SetSecBackground(background = R.drawable._e826ba47840c0723c356ce92e6d8b39)
+    viewModel.SetSecBackground(background = R.drawable.wallhaven_83kvrk)
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -56,7 +59,9 @@ fun DeteilPage(userCardViewModel: UserCardViewModel) {
                     .size(30.dp),
                     shape = CircleShape,
                 ) {
-                    Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
+                    viewModel.InitUserProfilePic(file = file, context = context)
+                    //
+                  //  Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
                 }
                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                 Text(text = viewModel.userName,
@@ -80,13 +85,16 @@ fun DeteilPage(userCardViewModel: UserCardViewModel) {
                         .fillMaxWidth()
                 ) {
                     Column() {
-                        Text(
-                            text = viewModel.testTxt,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 15.dp, end = 15.dp, top = 15.dp),
-                            fontWeight = FontWeight.W500,
-                        )
+
+                        SelectionContainer {
+                            Text(
+                                text = viewModel.testTxt,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 15.dp, end = 15.dp, top = 15.dp),
+                                fontWeight = FontWeight.W500,
+                            )
+                        }
                         Row(horizontalArrangement = Arrangement.spacedBy((-15).dp), modifier = Modifier.align(Alignment.End)){
                             IconButton(onClick = {
                                 viewModel.reading = false
@@ -117,7 +125,7 @@ fun DeteilPage(userCardViewModel: UserCardViewModel) {
 
 @Composable
 fun ReadingFragments(userInfoViewModel: UserInfoViewModel,
-                     userCardViewModel: UserCardViewModel) {
+                     userCardViewModel: UserCardViewModel, file: File,context: Context) {
 
     val viewModel: UiModel = viewModel()
     val percentOffsetX = animateFloatAsState(if (viewModel.reading) 0f else 1f)
@@ -130,7 +138,7 @@ fun ReadingFragments(userInfoViewModel: UserInfoViewModel,
     ) {
         Scaffold(
             content = {
-                DeteilPage(userCardViewModel)
+                DeteilPage(userCardViewModel,file,context)
             },
 
             topBar = {
