@@ -8,9 +8,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.registerForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -101,11 +103,20 @@ fun DrawerInfo(viewModel:UiModel,
         }
     }
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .background(if (viewModel.lightTheme) Color(90, 143, 185) else Color(35, 48, 64))
-    ) {
-        Column(modifier = Modifier.height(150.dp)
+
+    val shit = (
+        if(viewModel.editingProfile) {
+            Modifier.background(Color(90, 143, 185)).animateContentSize(tween(800)).fillMaxSize()
+        }
+        else {
+            Modifier.background(Color(90, 143, 185)).animateContentSize(tween(800)).height(150.dp)
+        }
+    )
+
+    Column(modifier = shit) {
+
+        Column(
+            modifier = Modifier.height(150.dp)
         ) {
 
             Row(modifier = Modifier.padding(start = 15.dp, top = 15.dp)){
@@ -117,7 +128,7 @@ fun DrawerInfo(viewModel:UiModel,
                         .clickable {
                             getContent.launch("image/*")
                             /*
-                            val sendIntent: Intent = Intent().apply {
+                            val sendIntent: Intent = Intent().apply { // 分享 Intent
                                 action = Intent.ACTION_PICK
                                 type = "image/*"
                                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -131,13 +142,13 @@ fun DrawerInfo(viewModel:UiModel,
                              */
                         },
                 ) {
-                    viewModel.InitUserProfilePic(file = file, context = context)
+                    viewModel.InitUserProfilePic()
                 }
                 Column(horizontalAlignment = Alignment.End, modifier = Modifier.fillMaxWidth()) {
 
                     CompositionLocalProvider(LocalContentColor provides Color.White) {
                         IconButton(onClick = {
-
+                            viewModel.editingProfile = !viewModel.editingProfile
                         }) {
                             Icon(Icons.Rounded.Edit, contentDescription = "")
                         }
@@ -159,18 +170,25 @@ fun DrawerInfo(viewModel:UiModel,
             }
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
+
+    AnimatedVisibility(
+        visible = !viewModel.editingProfile,
+        enter = fadeIn( animationSpec = tween(durationMillis = 550)),
+        exit = fadeOut( animationSpec = tween(durationMillis = 550))
     ) {
 
-        LazyColumn(
-            modifier = Modifier.weight(1f)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            items(items.size) {
-                val squareSize = 96.dp
 
-                val swipeableState = rememberSwipeableState(0)
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                items(items.size) {
+                    val squareSize = 96.dp
+
+                    val swipeableState = rememberSwipeableState(0)
 
 
                     /*confirmStateChange = { wtf -> //是否启用应用动画,也就是最终会不会停留
@@ -180,186 +198,186 @@ fun DrawerInfo(viewModel:UiModel,
                         else -> true
                     }*/
 
-                val sizePx = with(LocalDensity.current) { squareSize.toPx() }
-                val anchors = mapOf(0f to 0, sizePx to -1)
+                    val sizePx = with(LocalDensity.current) { squareSize.toPx() }
+                    val anchors = mapOf(0f to 0, sizePx to -1)
 
-                var editable by remember { mutableStateOf(false) }
+                    var editable by remember { mutableStateOf(false) }
 
-                editable = swipeableState.targetValue == -1
-                LaunchedEffect(editable) {   // 检测是否有任何地方被滑动
-                    viewModel.hasAnyExtraButtonRevealed = editable
-                }
-                LaunchedEffect(viewModel.hasAnyExtraButtonRevealed) {
-                    if(!viewModel.hasAnyExtraButtonRevealed) {
-                        swipeableState.animateTo(0)
+                    editable = swipeableState.targetValue == -1
+                    LaunchedEffect(editable) {   // 检测是否有任何地方被滑动
+                        viewModel.hasAnyExtraButtonRevealed = editable
                     }
-                }
+                    LaunchedEffect(viewModel.hasAnyExtraButtonRevealed) {
+                        if(!viewModel.hasAnyExtraButtonRevealed) {
+                            swipeableState.animateTo(0)
+                        }
+                    }
 
-                /*LaunchedEffect(viewModel.requestCloseDrawer) { //关闭 Drawer
-                        swipeableState.animateTo(0)
-                        Log.d(TAG, "wtf ++++ ")
-                        viewModel.requestCloseDrawer = false
-                }*/
+                    /*LaunchedEffect(viewModel.requestCloseDrawer) { //关闭 Drawer
+                            swipeableState.animateTo(0)
+                            Log.d(TAG, "wtf ++++ ")
+                            viewModel.requestCloseDrawer = false
+                    }*/
 
-                val anim = rememberCoroutineScope()
+                    val anim = rememberCoroutineScope()
 
-                Box(){
-                    Column(
-                        modifier = Modifier
-                            .swipeable(
-                                enabled = editable || !viewModel.hasAnyExtraButtonRevealed,
-                                state = swipeableState,
-                                anchors = anchors,
-                                thresholds = { from, to ->
-                                    FractionalThreshold(0.3f)
-                                },
-                                orientation = Orientation.Horizontal,
-                                reverseDirection = true,
-
-                                )
-                            .offset {
-                                IntOffset(-swipeableState.offset.value.roundToInt(), 0)
-                            }
-                            .clickable {
-                                if (!viewModel.hasAnyExtraButtonRevealed) {
-                                    viewModel.requestCloseDrawer = true
-                                    userCardViewModel.updateLastSelected(
-                                        user.uid,
-                                        user.userName,
-                                        items[it].uid
-                                    )
-                                } else {
-                                    viewModel.hasAnyExtraButtonRevealed = false
-                                }
-                                //      viewModel.requestSelectPicture = true
-                            }
-
-                            .background(if (items[it].uid != user.last) MaterialTheme.colors.surface else MaterialTheme.colors.primary)
-                    ) {
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                    Box(){
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
+                                .swipeable(
+                                    enabled = (editable || !viewModel.hasAnyExtraButtonRevealed) && !viewModel.editingProfile,
+                                    state = swipeableState,
+                                    anchors = anchors,
+                                    thresholds = { from, to ->
+                                        FractionalThreshold(0.3f)
+                                    },
+                                    orientation = Orientation.Horizontal,
+                                    reverseDirection = true,
+                                )
+                                .offset {
+                                    IntOffset(-swipeableState.offset.value.roundToInt(), 0)
+                                }
+                                .clickable {
+                                    if (!viewModel.hasAnyExtraButtonRevealed && !viewModel.editingProfile) {
+                                        viewModel.requestCloseDrawer = true
+                                        userCardViewModel.updateLastSelected(
+                                            user.uid,
+                                            user.userName,
+                                            items[it].uid
+                                        )
+                                    } else {
+                                        viewModel.hasAnyExtraButtonRevealed = false
+                                    }
+                                    //      viewModel.requestSelectPicture = true
+                                }
 
+                                .background(if (items[it].uid != user.last) MaterialTheme.colors.surface else MaterialTheme.colors.primary)
                         ) {
 
-                            Icon(
-                                Icons.Rounded.Bookmark,
-                                contentDescription = null,
-                                modifier = Modifier.padding(5.dp)
-                            )
-                            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                            Text(
-                                text = items[it].drawerItems,
-                                style = MaterialTheme.typography.body2,
-                                fontWeight = FontWeight.W600,
-                                modifier = Modifier.padding(6.dp)
-                            )
-                            // Spacer(modifier = Modifier.padding(vertical = 5.dp))
-                            Column(
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(end = 5.dp),
-                                horizontalAlignment = Alignment.End
+                                    .padding(8.dp)
+
                             ) {
-                                Surface(
-                                    shape = CircleShape,
-                                    color = (Color(208, 207, 209)),
+
+                                Icon(
+                                    Icons.Rounded.Bookmark,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(5.dp)
+                                )
+                                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                                Text(
+                                    text = items[it].drawerItems,
+                                    style = MaterialTheme.typography.body2,
+                                    fontWeight = FontWeight.W600,
+                                    modifier = Modifier.padding(6.dp)
+                                )
+                                // Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(end = 5.dp),
+                                    horizontalAlignment = Alignment.End
                                 ) {
-                                    Text(
-                                        text = "${categoryItems[it].count}",
-                                        modifier = Modifier.padding(
-                                            start = 6.dp,
-                                            end = 6.dp,
-                                            top = 2.dp,
-                                            bottom = 2.dp
-                                        ),
-                                        style = androidx.compose.ui.text.TextStyle(
-                                            fontWeight = FontWeight.W900,
-                                            fontSize = 12.sp,
-                                            letterSpacing = 0.15.sp,
-                                            color = Color.White
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = (Color(208, 207, 209)),
+                                    ) {
+                                        Text(
+                                            text = "${categoryItems[it].count}",
+                                            modifier = Modifier.padding(
+                                                start = 6.dp,
+                                                end = 6.dp,
+                                                top = 2.dp,
+                                                bottom = 2.dp
+                                            ),
+                                            style = androidx.compose.ui.text.TextStyle(
+                                                fontWeight = FontWeight.W900,
+                                                fontSize = 12.sp,
+                                                letterSpacing = 0.15.sp,
+                                                color = Color.White
+                                            )
                                         )
-                                    )
+                                    }
+                                }
+                            }
+                        }
+
+                        LaunchedEffect(viewModel.editingCategory) {  // 检测编辑分类对话框是否已关闭
+                            if(!viewModel.editingCategory) {
+                                viewModel.hasAnyExtraButtonRevealed = false
+                            }
+                        }
+                        androidx.compose.animation.AnimatedVisibility(visible = editable) {
+                            Column(modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(), horizontalAlignment = Alignment.End) {
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ){
+                                    IconButton(onClick = {
+                                        viewModel.editingCategory = true
+                                        viewModel.editingCategoryUid = items[it].uid
+
+                                        //   Log.d(TAG, "uid + ${viewModel.editingCategoryUid} \n name + ${viewModel.editingCategoryName}")
+                                    }, modifier = Modifier
+                                        .background(Color(0xFF7F849F))
+                                        .padding(1.dp)) {
+                                        Icon(Icons.Rounded.Edit, contentDescription = null)
+                                    }
+                                    IconButton(onClick = {
+                                        userCardViewModel.deleteCategoryDataBase(items[it].uid)
+                                        viewModel.hasAnyExtraButtonRevealed = false
+                                    }, modifier = Modifier
+                                        .background(Color(0xFFE65B65))
+                                        .padding(1.dp)) {
+                                        Icon(Icons.Rounded.Delete, contentDescription = null)
+                                    }
                                 }
                             }
                         }
                     }
 
-                    LaunchedEffect(viewModel.editingCategory) {  // 检测编辑分类对话框是否已关闭
-                        if(!viewModel.editingCategory) {
-                            viewModel.hasAnyExtraButtonRevealed = false
-                        }
-                    }
-                    androidx.compose.animation.AnimatedVisibility(visible = editable) {
-                        Column(modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(), horizontalAlignment = Alignment.End) {
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ){
-                                IconButton(onClick = {
-                                    viewModel.editingCategory = true
-                                    viewModel.editingCategoryUid = items[it].uid
 
-                                 //   Log.d(TAG, "uid + ${viewModel.editingCategoryUid} \n name + ${viewModel.editingCategoryName}")
-                                }, modifier = Modifier
-                                    .background(Color(0xFF7F849F))
-                                    .padding(1.dp)) {
-                                    Icon(Icons.Rounded.Edit, contentDescription = null)
-                                }
-                                IconButton(onClick = {
-                                    userCardViewModel.deleteCategoryDataBase(items[it].uid)
-                                    viewModel.hasAnyExtraButtonRevealed = false
-                                }, modifier = Modifier
-                                    .background(Color(0xFFE65B65))
-                                    .padding(1.dp)) {
-                                    Icon(Icons.Rounded.Delete, contentDescription = null)
-                                }
-                            }
-                        }
+                }
+            }
+            //   Spacer(modifier = Modifier.padding(vertical = 5.dp))
+            if(items.isEmpty()) {
+                Box(modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("暂无分类", style = MaterialTheme.typography.h6)
                     }
                 }
-
-
             }
-        }
-     //   Spacer(modifier = Modifier.padding(vertical = 5.dp))
-        if(items.isEmpty()) {
-            Box(modifier = Modifier
-                .weight(1f)
+            Divider(modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
-            ) {
-                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("暂无分类", style = MaterialTheme.typography.h6)
-                }
-            }
-        }
-        Divider(modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp)
-            .height(1.dp)
-        )
+                .padding(5.dp)
+                .height(1.dp)
+            )
 
-        LaunchedEffect(viewModel.addNewCategory) {  // 检测新建分类对话框是否已关闭
-            if(!viewModel.addNewCategory) {
-                viewModel.hasAnyExtraButtonRevealed = false
-            }
-        }
-        Row(
-            modifier = Modifier
-                .clickable {
-                    viewModel.addNewCategory = true
+            LaunchedEffect(viewModel.addNewCategory) {  // 检测新建分类对话框是否已关闭
+                if(!viewModel.addNewCategory) {
+                    viewModel.hasAnyExtraButtonRevealed = false
                 }
-                .padding(8.dp)
-                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Rounded.Add, contentDescription = null, modifier = Modifier.padding(5.dp))
-            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-            Text(text = "添加分类", style = MaterialTheme.typography.body2, fontWeight = FontWeight.W600, modifier = Modifier.padding(6.dp))
+            }
+            Row(
+                modifier = Modifier
+                    .clickable {
+                        if (!viewModel.editingProfile) viewModel.addNewCategory = true
+                    }
+                    .padding(8.dp)
+                    .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Rounded.Add, contentDescription = null, modifier = Modifier.padding(5.dp))
+                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                Text(text = "添加分类", style = MaterialTheme.typography.body2, fontWeight = FontWeight.W600, modifier = Modifier.padding(6.dp))
+            }
         }
     }
 }

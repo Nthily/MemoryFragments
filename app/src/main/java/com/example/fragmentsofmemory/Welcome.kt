@@ -15,9 +15,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -45,10 +44,7 @@ import com.afollestad.date.year
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.example.fragmentsofmemory.Database.UserInfo
-import com.example.fragmentsofmemory.fragments.AddingPage
-import com.example.fragmentsofmemory.fragments.HomePageEntrances
-import com.example.fragmentsofmemory.fragments.ReadingFragments
-import com.example.fragmentsofmemory.fragments.popUpDrawer
+import com.example.fragmentsofmemory.fragments.*
 import com.example.fragmentsofmemory.ui.theme.MyTheme
 import com.google.accompanist.coil.CoilImage
 import com.yalantis.ucrop.UCrop
@@ -113,6 +109,7 @@ class Welcome : AppCompatActivity() {
             viewModel.adding -> viewModel.endAddPage()
             viewModel.draweringPage -> viewModel.closeDrawerContent()
             viewModel.reading -> viewModel.endReading()
+            viewModel.editingProfile -> viewModel.endEditProfile() // TODO 在 UiModel 写函数
             else -> super.onBackPressed()
         }
     }
@@ -147,13 +144,16 @@ fun WelcomePage(viewModel:UiModel, navController: NavController, file:File, cont
                 textVisibility.value = true
             }
 
-            AnimatedVisibility(visible = textVisibility.value) {
+            AnimatedVisibility(visible = textVisibility.value,
+                enter = fadeIn( animationSpec = tween(durationMillis = 550)),
+                exit = fadeOut( animationSpec = tween(durationMillis = 550))
+            ) {
                 Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     Surface(
                         shape = CircleShape,
                         modifier = Modifier.size(130.dp)
                     ) {
-                        viewModel.InitUserProfilePic(file = file, context = context)
+                        viewModel.InitUserProfilePic()
                     }
                     Spacer(modifier = Modifier.padding(vertical = 30.dp))
                     Text(text = "欢迎回家", fontWeight = FontWeight.W900, style = MaterialTheme.typography.h6)

@@ -82,6 +82,8 @@ class UiModel: ViewModel(){
     var userAvatarPath by mutableStateOf("") // 用户头像所在的路径
 
 
+    var editingProfile by mutableStateOf(false)
+
     fun endReading() {
         reading = false
         maining = true
@@ -89,8 +91,10 @@ class UiModel: ViewModel(){
         timeResult = ""
     }
 
-
-
+    fun endEditProfile(){
+        editingProfile = false
+        draweringPage = true
+    }
     @Composable
     fun SetBackground(background: Int): Unit{
         return Image(painter = painterResource(id = background), contentDescription = null,
@@ -143,9 +147,8 @@ class UiModel: ViewModel(){
     }
 
     @Composable
-    fun InitUserProfilePic(file:File, context: Context) {
-
-        if(!userAvatarPath.isNullOrEmpty()) {
+    fun InitUserProfilePic() {
+        if(File(userAvatarPath).exists()) {
             CoilImage(Uri.fromFile(File(userAvatarPath)), null)
         } else {
             Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)

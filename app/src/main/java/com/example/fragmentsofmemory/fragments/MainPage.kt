@@ -91,7 +91,7 @@ fun CreateMemory(viewModel: UiModel,
                     shape = CircleShape,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
                 ) {
-                    viewModel.InitUserProfilePic(file = file, context = context)
+                    viewModel.InitUserProfilePic()
                   //  Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
                 }
 

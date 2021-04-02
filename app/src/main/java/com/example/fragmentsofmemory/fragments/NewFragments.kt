@@ -96,7 +96,7 @@ fun PageContent(viewModel: UiModel, file: File, context: Context) {
                     .align(Alignment.CenterVertically),
                 shape = CircleShape
             ) {
-                viewModel.InitUserProfilePic(file = file, context = context)
+                viewModel.InitUserProfilePic()
               //  Image(painter = painterResource(R.drawable.qq20210315211722), contentDescription = null)
             }
             Spacer(modifier = Modifier.padding(horizontal = 5.dp))
