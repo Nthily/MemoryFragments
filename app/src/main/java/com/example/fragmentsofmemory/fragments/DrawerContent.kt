@@ -38,9 +38,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import com.example.fragmentsofmemory.Database.UserInfo
@@ -131,7 +134,8 @@ fun CategoryColumn(viewModel:UiModel,
                                         userCardViewModel.updateLastSelected(
                                             user.uid,
                                             user.userName,
-                                            items[it].uid
+                                            items[it].uid,
+                                            user.signature
                                         )
                                     } else {
                                         viewModel.hasAnyExtraButtonRevealed = false
@@ -359,6 +363,7 @@ fun UserInfoColumn(viewModel:UiModel,
 fun uploadPicture(context: Context, viewModel: UiModel) {
     try {
         viewModel.userAvatarUploading = File.createTempFile("avatar", null)
+        Log.d(TAG, " wtf wtf wtf ${viewModel.userAvatarUploading!!.absolutePath}")
         val options = UCrop.Options()
         options.setCircleDimmedLayer(true) // 使用圆形裁剪
         options.setShowCropGrid(false)  // 不显示头像选取的网格
@@ -403,53 +408,84 @@ fun DrawerInfo(viewModel:UiModel,
         }
     }
 
-    // 用户栏
+    // 编辑信息栏
     AnimatedVisibility(
         visible = viewModel.editingProfile,
         enter = fadeIn( animationSpec = tween(durationMillis = 1000)),
         exit = fadeOut( animationSpec = tween(durationMillis = 500))
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(Color(90, 143, 185)),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ){
-            Card(
-                elevation = 12.dp,
+
+        Box{
+            Image(painter = painterResource(id = R.drawable.edit_bkg), contentDescription = null,modifier = Modifier
+                .fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
-                    .padding(15.dp)
-            ) {
-                Row(
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                Card(
+                    backgroundColor = Color(255, 255, 255 , 235),
+                    elevation = 12.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp)
                 ) {
-                    Column{
-                        Surface(
-                            shape = CircleShape,
-                            modifier = Modifier
-                                .padding(15.dp)
-                                .size(60.dp)
-                                .clip(shape = CircleShape)
-                                .clickable {
-                                    getContent.launch("image/*")
-                                },
-                            border = BorderStroke(2.dp, Color.DarkGray)
-                        ) {
-                            viewModel.InitUserProfilePic()
+                    Row(
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxHeight(),
+                            verticalArrangement = Arrangement.Center){
+                            Surface(
+                                shape = CircleShape,
+                                modifier = Modifier
+                                    .padding(15.dp)
+                                    .size(60.dp)
+                                    .clip(shape = CircleShape)
+                                    .clickable {
+                                        getContent.launch("image/*")
+                                    },
+                                border = BorderStroke(2.dp, Color.DarkGray)
+                            ) {
+                                viewModel.InitUserProfilePic()
+                            }
+                            Text("编辑头像",
+                                style = MaterialTheme.typography.caption,
+                                modifier = Modifier.align(Alignment.CenterHorizontally))
                         }
-                        Text("编辑头像",
-                            style = MaterialTheme.typography.body2,
-                            modifier = Modifier.align(Alignment.CenterHorizontally))
+                        Column(
+                            modifier = Modifier.padding(15.dp)
+                        ) {
+                            val userName = remember{ mutableStateOf("")}
+                            OutlinedTextField(value = userName.value, onValueChange = {
+                                userName.value = it
+                            },
+                                modifier = Modifier.height(60.dp),
+                                label = {Text("你の名字")},
+                                singleLine = true,
+                                textStyle = MaterialTheme.typography.caption
+                            )
+                            Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
+                            OutlinedTextField(value = userName.value, onValueChange = {
+                                userName.value = it
+                            },
+                                modifier = Modifier.height(150.dp),
+                                label = {Text("你の签名/状态")},
+                                textStyle = MaterialTheme.typography.caption
+                            )
+                        }
                     }
                 }
             }
         }
     }
 
-    // 编辑信息界面栏
+    // 用户栏
     AnimatedVisibility(
         visible = !viewModel.editingProfile,
         enter = fadeIn( animationSpec = tween(durationMillis = 1200)),
@@ -470,22 +506,21 @@ fun DrawerInfo(viewModel:UiModel,
                             .size(70.dp)
                             .clip(shape = CircleShape)
                             .clickable {
-                                getContent.launch("image/*")
+                                //getContent.launch("image/*")
                                 /*
                                 val sendIntent: Intent = Intent().apply { // 分享 Intent
                                     action = Intent.ACTION_PICK
                                     type = "image/*"
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                                 }
-                                val shareIntent = Intent.createChooser(sendIntent, "选择一张图片作为头像吧~")
                                 //     startActivity(content, shareIntent, Bundle())
-                                startActivityForResult(context, shareIntent, 1, Bundle())
 
                                  */
 
                                  */
                             },
                     ) {
+                        Log.d(TAG, "123455555555555555555")
                         viewModel.InitUserProfilePic()
                     }
                     Column(horizontalAlignment = Alignment.End, modifier = Modifier.fillMaxWidth()) {
@@ -508,7 +543,7 @@ fun DrawerInfo(viewModel:UiModel,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier.padding(start = 15.dp, top = 15.dp),
                         color = Color.White)
-                    Text(text = "永远相信美好的事情即将发生",
+                    Text(text = user.signature,
                         style = MaterialTheme.typography.overline,
                         fontWeight = FontWeight.W900,
                         modifier = Modifier.padding(start = 15.dp, top = 8.dp),

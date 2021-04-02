@@ -29,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
 
                     drawer.insert(DrawerItems(0, "Home"))
                     dao.insert(UserCard(0, 1, "Hello World", "2021.3.28"))
-                    info.insert(UserInfo(0, "Nthily", 1))
+                    info.insert(UserInfo(0, "Nthily", 1, "永远相信美好的事情即将发生"))
                 }
             }
         }

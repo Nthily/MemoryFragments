@@ -148,7 +148,7 @@ class UiModel: ViewModel(){
     @Composable
     fun InitUserProfilePic() {
         if(File(userAvatarPath).exists()) {
-            CoilImage(Uri.fromFile(File(userAvatarPath)), null)
+            CoilImage(Uri.fromFile(File(userAvatarPath)), "123")
         } else {
             Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
         }

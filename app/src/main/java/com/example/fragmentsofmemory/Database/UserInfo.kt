@@ -16,5 +16,6 @@ import androidx.room.PrimaryKey
 data class UserInfo(
     @PrimaryKey(autoGenerate = true) val uid: Int,
     @ColumnInfo(name = "userName") val userName: String,
-    @ColumnInfo(name = "lastSelected") var last: Int?
+    @ColumnInfo(name = "lastSelected") val last: Int?,
+    @ColumnInfo(name = "signature") val signature: String
 )

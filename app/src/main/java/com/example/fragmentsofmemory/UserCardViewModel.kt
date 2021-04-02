@@ -67,9 +67,9 @@ class UserCardViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun updateLastSelected(id: Int, name:String, last:Int) {
+    fun updateLastSelected(id: Int, name:String, last:Int, signature:String) {
         viewModelScope.launch(Dispatchers.IO){
-            db.getUserInfo().update(UserInfo(id, name, last))
+            db.getUserInfo().update(UserInfo(id, name, last, signature))
         }
     }
 }
