@@ -1,5 +1,8 @@
 ## A beautiful interface created through Jetpack Compose
 
+
+## And with rich animation effects
+
 ## ⛏ Work in progress
 
 ## 🙌 Description
