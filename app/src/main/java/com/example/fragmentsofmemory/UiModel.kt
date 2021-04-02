@@ -78,6 +78,8 @@ class UiModel: ViewModel(){
 
     val imageUriState = mutableStateOf<Uri?>(null)
 
+    var userAvatar by mutableStateOf(Uri.EMPTY)
+
 
     fun endReading() {
         reading = false
@@ -141,8 +143,17 @@ class UiModel: ViewModel(){
 
     @Composable
     fun InitUserProfilePic(file:File, context: Context) {
-        if(file.exists()){
+        /*if(file.exists()){
             CoilImage(Uri.fromFile(file), null, fadeIn = true)
+        } else {
+            Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
+        }*/
+        if(userAvatar.equals(Uri.EMPTY) && file.exists()) {
+            userAvatar = Uri.fromFile(file)
+        }
+
+        if(!userAvatar.equals(Uri.EMPTY)) {
+            CoilImage(userAvatar, null)
         } else {
             Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
         }

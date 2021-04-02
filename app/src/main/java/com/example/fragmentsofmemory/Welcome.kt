@@ -10,7 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -48,6 +51,7 @@ import com.example.fragmentsofmemory.fragments.ReadingFragments
 import com.example.fragmentsofmemory.fragments.popUpDrawer
 import com.example.fragmentsofmemory.ui.theme.MyTheme
 import com.google.accompanist.coil.CoilImage
+import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.delay
 import java.io.File
 import java.util.Timer
@@ -59,10 +63,34 @@ class Welcome : AppCompatActivity() {
     private val dialogViewModel:DialogViewModel by viewModels()
     private val viewModel:UiModel by viewModels()
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            viewModel.userAvatar = UCrop.getOutput(data!!)
+            Toast.makeText(this, "更新头像成功", Toast.LENGTH_LONG).show()
+        } else if(resultCode == UCrop.RESULT_ERROR) {
+            viewModel.userAvatar = Uri.EMPTY
+            Toast.makeText(this, "更新头像失败", Toast.LENGTH_LONG).show()
+        }
+    }
+
+
     @ExperimentalMaterialApi
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Log.d(TAG, "wtf wt f + ${result.data}")
+            }
+
+        }
+
+         */
+
+
         setContent{
             val context = LocalContext.current
             val file = File(context.getExternalFilesDir(null), "picture.jpg")

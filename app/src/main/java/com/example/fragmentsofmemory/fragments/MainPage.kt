@@ -1,5 +1,6 @@
 package com.example.fragmentsofmemory.fragments
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -259,11 +260,11 @@ fun TopBar(viewModel: UiModel, scaffoldState: ScaffoldState, scope: CoroutineSco
 }
 
 
+
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel, file: File, context: Context, user:UserInfo) {
-
 
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()

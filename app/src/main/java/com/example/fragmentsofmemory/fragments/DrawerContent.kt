@@ -1,5 +1,6 @@
 package com.example.fragmentsofmemory.fragments
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.Uri
@@ -54,25 +55,31 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.fragmentsofmemory.Database.UserInfo
 import com.google.accompanist.coil.CoilImage
 import com.google.accompanist.glide.GlideImage
+import com.yalantis.ucrop.UCrop
 import java.io.*
+import java.net.URI
 import kotlin.math.roundToInt
-
 
 
 fun uploadPicture(file:File, context: Context, viewModel: UiModel) {
     try {
-        val getIS = context.contentResolver.openInputStream(viewModel.imageUriState.value!!)
+        UCrop.of(viewModel.imageUriState.value!!, Uri.fromFile(file))
+            .withAspectRatio(1.0F, 1.0F)
+            .start(context as Activity)
+
+        /*val getIS = context.contentResolver.openInputStream(viewModel.imageUriState.value!!) //基本上传文件代码
         val os = FileOutputStream(file)
         val data = ByteArray(getIS!!.available())
         getIS.read(data)
         os.write(data)
         getIS.close()
-        os.close()
-        Toast.makeText(context, "更新头像成功，需要重启程序才能更新", Toast.LENGTH_LONG).show()
+        os.close()*/
+
     } catch (e:IOException) {
         Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
         Log.w("ExternalStorage", "Error writing $file", e);
     }
+  //  Toast.makeText(context, "更新头像成功", Toast.LENGTH_LONG).show()
 }
 
 
@@ -94,7 +101,6 @@ fun DrawerInfo(viewModel:UiModel,
     val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) {
         viewModel.imageUriState.value = it
         // Handle the returned Uri
-
     }
 
     if (viewModel.imageUriState.value != null) {
