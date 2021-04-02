@@ -18,4 +18,3 @@ Drawer | Drawer | Home | Card details
 [![cZnEvV.png](https://z3.ax1x.com/2021/04/01/cZnEvV.png)](https://imgtu.com/i/cZnEvV)
 [![cZnmbF.png](https://z3.ax1x.com/2021/04/01/cZnmbF.png)](https://imgtu.com/i/cZnmbF)
 [![cZneDU.png](https://z3.ax1x.com/2021/04/01/cZneDU.png)](https://imgtu.com/i/cZneDU)
-<img src="https://z3.ax1x.com/2021/04/03/cmXLMn.md.jpg" height = "765" width = "376">
