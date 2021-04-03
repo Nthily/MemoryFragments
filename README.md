@@ -3,7 +3,6 @@
 
 ## And with rich animation effects
 
-## ⛏ Work in progress
 
 ## 🙌 Description
 ### Stores everything you record, supports deletion and editing, and supports sorting functions
