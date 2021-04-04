@@ -12,6 +12,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -41,11 +42,13 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -506,50 +509,70 @@ fun DrawerInfo(viewModel:UiModel,
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
+
+
+                        val enableCancelButton = mutableStateOf(true)
+                        val focusRequester = FocusRequester()
+
                         Surface(
                             shape = CircleShape,
                             modifier = Modifier
-                                .padding(12.dp)
-                                .size(65.dp)
+                                .padding(start = 13.dp, top = 13.dp, end = 13.dp)
+                                .size(70.dp)
                                 .clip(shape = CircleShape)
                                 .clickable {
                                     getContent.launch("image/*")
                                 },
-                            border = BorderStroke(1.dp, Color.DarkGray)
+                            border = BorderStroke(2.dp, Color.DarkGray)
                         ) {
                             viewModel.InitUserProfilePic(context)
                         }
-                        /*
-                        Text("编辑头像",
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            color = Color.DarkGray)
-
-                         */
-                        OutlinedTextField(value = user.userName, onValueChange = {
-                            userCardViewModel.updateLastSelected(user.uid, it, user.last!!, user.signature)
-                        },
+                        Column(
                             modifier = Modifier
-                                .height(60.dp),
-                            //    .focusRequester(focusRequester),
-                            label = {Text("你的名字")},
-                            singleLine = true,
-                            textStyle = MaterialTheme.typography.caption,
-                            trailingIcon = {
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(Icons.Filled.Cancel, null)
-                                }
-                            }
-                        )
-                        Spacer(modifier = Modifier.padding(vertical = 10.dp))
+                                .fillMaxWidth()
+                                .padding(start = 26.dp, end = 26.dp, top = 15.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            OutlinedTextField(value = user.userName, onValueChange = {
+                                userCardViewModel.updateLastSelected(user.uid, it, user.last!!, user.signature)
+                            },
+                                modifier = Modifier
+                                    .height(60.dp)
+                                    .fillMaxWidth()
+                                    .focusRequester(focusRequester)
+                                    .onFocusChanged {
+                                        enableCancelButton.value = !enableCancelButton.value
+                                    },
 
-                        OutlinedTextField(value = user.signature, onValueChange = {
-                            userCardViewModel.updateLastSelected(user.uid, user.userName, user.last!!, it)
-                        },
-                            modifier = Modifier.height(150.dp),
-                            label = {Text("你的签名/状态")},
-                            textStyle = MaterialTheme.typography.caption
-                        )
+                                label = {Text("你的名字")},
+                                singleLine = true,
+                                textStyle = MaterialTheme.typography.button,
+                                trailingIcon = {
+                                    AnimatedVisibility(visible = enableCancelButton.value) {
+                                        IconButton(
+                                            onClick = {
+                                                userCardViewModel.updateLastSelected(user.uid, "", user.last!!, user.signature)
+                                            },
+                                        ) {
+                                            Icon(Icons.Filled.Cancel, null)
+                                        }
+                                    }
+                                },
+
+                                )
+
+                            Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
+                            OutlinedTextField(value = user.signature, onValueChange = {
+                                userCardViewModel.updateLastSelected(user.uid, user.userName, user.last!!, it)
+                            },
+                                modifier = Modifier
+                                    .height(150.dp)
+                                    .fillMaxWidth(),
+                                label = {Text("你的签名/状态")},
+                                textStyle = MaterialTheme.typography.button
+                            )
+                        }
                     }
                 }
             }
