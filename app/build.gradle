@@ -125,4 +125,6 @@ dependencies {
 
     implementation 'com.github.yalantis:ucrop:2.2.6'
     implementation 'com.github.yalantis:ucrop:2.2.6-native'
+
+
 }

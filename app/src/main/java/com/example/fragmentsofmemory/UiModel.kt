@@ -89,12 +89,15 @@ class UiModel: ViewModel(){
 
     val imageUriState = mutableStateOf<Uri?>(null)
     var userAvatarUploading by mutableStateOf<File?>(null) //上传头像的临时文件
+    var userAvatarUploadedPath by mutableStateOf("")    // 成功上传并完成裁剪的头像文件路径
     var userAvatarPath by mutableStateOf("") // 用户头像所在的路径
 
 
     var editingProfile by mutableStateOf(false)
 
     var requestDeleteCard by mutableStateOf(false)
+
+    var enableCancelButton by mutableStateOf(false)
 
     fun endReading() {
         reading = false
@@ -106,6 +109,7 @@ class UiModel: ViewModel(){
     fun endEditProfile(){
         editingProfile = false
     }
+
 
     fun startShare(context: Context, message:String) {
         val sendIntent: Intent = Intent().apply { // 分享 Intent
@@ -168,13 +172,14 @@ class UiModel: ViewModel(){
     }
 
     @Composable
-    fun InitUserProfilePic(context: Context) {
+    fun InitUserProfilePic() {
+        val avatar = File(if(userAvatarUploadedPath.isEmpty()) userAvatarPath else userAvatarUploadedPath)
 
-        if(File(userAvatarPath).exists()) {
-            Log.d(TAG, "updated \n\n")
-            CoilImage(Uri.fromFile(File(userAvatarPath)), null)
+        if(avatar.exists()) {
+            CoilImage(Uri.fromFile(avatar), null)
 
         } else {
+            Log.d(TAG, "not exist!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
         }
     }

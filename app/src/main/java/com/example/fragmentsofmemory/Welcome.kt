@@ -25,6 +25,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,9 +59,10 @@ class Welcome : AppCompatActivity() {
         if(resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             File(viewModel.userAvatarPath).createNewFile()
             viewModel.userAvatarUploading!!.copyTo(File(viewModel.userAvatarPath), true)
-            Toast.makeText(this, "更新头像成功", Toast.LENGTH_LONG).show()
+            viewModel.userAvatarUploadedPath = viewModel.userAvatarUploading!!.absolutePath
+            Toast.makeText(this, "头像更新成功", Toast.LENGTH_LONG).show()
         } else if(resultCode == UCrop.RESULT_ERROR) {
-            Toast.makeText(this, "更新头像失败", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "头像更新失败", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -147,10 +149,10 @@ fun WelcomePage(viewModel:UiModel, navController: NavController, file:File, cont
                         shape = CircleShape,
                         modifier = Modifier.size(130.dp)
                     ) {
-                        viewModel.InitUserProfilePic(context)
+                        viewModel.InitUserProfilePic()
                     }
                     Spacer(modifier = Modifier.padding(vertical = 30.dp))
-                    Text(text = "欢迎回家", fontWeight = FontWeight.W900, style = MaterialTheme.typography.h6)
+                    Text(text = "欢迎回家", fontWeight = FontWeight.W900, style = MaterialTheme.typography.h6, color = Color.White)
                 }
 
                 Column(modifier = Modifier
@@ -161,7 +163,9 @@ fun WelcomePage(viewModel:UiModel, navController: NavController, file:File, cont
                 ) {
                     Text(text = "永远相信美好的事情即将发生",
                         fontWeight = FontWeight.W500,
-                        style = MaterialTheme.typography.body2)
+                        style = MaterialTheme.typography.body2,
+                        color = Color.White
+                    )
                 }
             }
         }

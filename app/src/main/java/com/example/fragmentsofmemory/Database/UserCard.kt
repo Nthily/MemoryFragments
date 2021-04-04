@@ -7,11 +7,11 @@ import androidx.room.ForeignKey.CASCADE
 @Entity(
     foreignKeys = [ForeignKey(entity = DrawerItems::class,
         parentColumns = ["uid"],
-        childColumns = ["categoryID"], onDelete = CASCADE)]
+        childColumns = ["categoryID"], onDelete = ForeignKey.SET_NULL)]
 )
 data class UserCard(
     @PrimaryKey(autoGenerate = true) val id: Int,
-    @ColumnInfo(name = "categoryID") val categoryID:Int,
+    @ColumnInfo(name = "categoryID") val categoryID:Int?,
     @ColumnInfo(name = "content") val content: String,
     @ColumnInfo(name = "time") val time: String,
 )

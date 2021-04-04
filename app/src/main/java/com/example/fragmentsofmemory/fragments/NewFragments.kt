@@ -102,7 +102,7 @@ fun PageContent(viewModel: UiModel, file: File, context: Context) {
                     .align(Alignment.CenterVertically),
                 shape = CircleShape
             ) {
-                viewModel.InitUserProfilePic(context)
+                viewModel.InitUserProfilePic()
               //  Image(painter = painterResource(R.drawable.qq20210315211722), contentDescription = null)
             }
             Spacer(modifier = Modifier.padding(horizontal = 5.dp))
@@ -168,22 +168,22 @@ fun AddingPage(dialogViewModel: DialogViewModel,
                                 onClick = {
 
                                     if (viewModel.editing) {
-                                        user.last?.let {
+                                        //user.last?.let {
                                             userCardViewModel.updateCardMsg(
                                                 viewModel.cardId,
                                                 viewModel.textModify,
                                                 viewModel.timeResult,
-                                                it
+                                                user.last
                                             )
-                                        }
+                                        //}
                                     } else {
-                                        user.last?.let {
+                                        //user.last?.let {
                                             userCardViewModel.addDataBase(
                                                 viewModel.textModify,
                                                 viewModel.timeResult,
-                                                it
+                                                user.last
                                             )
-                                        }
+                                        //}
                                     }
 
                                     viewModel.endAddPage()

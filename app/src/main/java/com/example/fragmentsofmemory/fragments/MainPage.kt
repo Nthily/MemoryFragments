@@ -91,7 +91,7 @@ fun CreateMemory(viewModel: UiModel,
                     shape = CircleShape,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
                 ) {
-                    viewModel.InitUserProfilePic(context)
+                    viewModel.InitUserProfilePic()
                   //  Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
                 }
 
@@ -195,7 +195,8 @@ fun ShowAllCards(viewModel: UiModel,
         ) {
             items(items.size) {
                 Column(verticalArrangement = Arrangement.SpaceEvenly) {
-                    if(items[it].categoryID == user.last) {
+                    // null 表示所有分类
+                    if(user.last == null || items[it].categoryID == user.last) {
                         CreateMemory(
                             viewModel = viewModel,
                             userName = user.userName,
@@ -296,21 +297,19 @@ fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel, 
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            if(user.last != null) {
-                FloatingActionButton(onClick = {
-                    if (viewModel.maining) {
-                    viewModel.adding = true
-                    viewModel.maining = false
-                }
-                    //   userCardViewModel.AddDatabase("Nthily", "Hello world", "3.15")
-                    //    Log.d(TAG, "Hello ${userCardViewModel.allCards.size}")
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.add_24px),
-                        contentDescription = null,
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
+            FloatingActionButton(onClick = {
+                if (viewModel.maining) {
+                viewModel.adding = true
+                viewModel.maining = false
+            }
+                //   userCardViewModel.AddDatabase("Nthily", "Hello world", "3.15")
+                //    Log.d(TAG, "Hello ${userCardViewModel.allCards.size}")
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.add_24px),
+                    contentDescription = null,
+                    modifier = Modifier.size(25.dp)
+                )
             }
         },
         //   bottomBar = { BottomApps() },

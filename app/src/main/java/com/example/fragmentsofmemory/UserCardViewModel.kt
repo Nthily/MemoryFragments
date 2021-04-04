@@ -30,7 +30,7 @@ class UserCardViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun addDataBase(userContent: String, time:String, did:Int) {
+    fun addDataBase(userContent: String, time:String, did:Int?) {
         viewModelScope.launch(Dispatchers.IO){
            val cardObj = UserCard(0, did, userContent, time)
             db.notes().insert(cardObj)
@@ -61,13 +61,13 @@ class UserCardViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun updateCardMsg(id: Int, content:String, time:String, did:Int) {
+    fun updateCardMsg(id: Int, content:String, time:String, did:Int?) {
         viewModelScope.launch(Dispatchers.IO){
             db.notes().update(UserCard(id, did, content, time))
         }
     }
 
-    fun updateLastSelected(id: Int, name:String, last:Int, signature:String) {
+    fun updateLastSelected(id: Int, name:String, last:Int?, signature:String) {
         viewModelScope.launch(Dispatchers.IO){
             db.getUserInfo().update(UserInfo(id, name, last, signature))
         }

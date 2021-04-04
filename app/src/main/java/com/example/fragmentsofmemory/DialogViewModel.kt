@@ -151,7 +151,7 @@ class DialogViewModel: ViewModel() {
 
                                }
                                TextField(value = viewModel.categoryName, onValueChange = {
-                                   viewModel.categoryName = it
+                                   viewModel.categoryName = it.replace("\n", "")
                                },
                                    colors = TextFieldDefaults.textFieldColors(
                                        backgroundColor = Color(255, 255, 255, 1)),

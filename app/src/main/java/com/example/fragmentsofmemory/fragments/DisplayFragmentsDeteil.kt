@@ -52,7 +52,7 @@ fun DeteilPage(
                     .size(30.dp),
                     shape = CircleShape,
                 ) {
-                    viewModel.InitUserProfilePic(context)
+                    viewModel.InitUserProfilePic()
                     //
                   //  Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
                 }

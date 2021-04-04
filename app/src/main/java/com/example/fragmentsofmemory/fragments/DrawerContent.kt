@@ -3,6 +3,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -36,6 +37,8 @@ import com.example.fragmentsofmemory.ui.theme.MyTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
@@ -46,13 +49,17 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.*
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.constraintlayout.widget.ConstraintLayout
+import coil.request.CachePolicy
+import coil.util.DebugLogger
 import com.example.fragmentsofmemory.Database.UserInfo
+import com.google.accompanist.coil.CoilImage
 import com.yalantis.ucrop.UCrop
 import java.io.*
 import kotlin.math.roundToInt
@@ -79,6 +86,74 @@ fun CategoryColumn(viewModel:UiModel,
                 .fillMaxWidth()
         ) {
 
+            // 所有分类
+            Box(){
+                Column(
+                    modifier = Modifier
+                        .background(if (user.last != null) MaterialTheme.colors.surface else MaterialTheme.colors.primary)
+                        .clickable {
+                            if(!viewModel.editingProfile) {
+                                viewModel.requestCloseDrawer = true
+                                userCardViewModel.updateLastSelected(
+                                    user.uid,
+                                    user.userName,
+                                    null,
+                                    user.signature
+                                )
+                            }
+                        }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            Icons.Rounded.Bookmark,
+                            contentDescription = null,
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                        Text(
+                            text = "所有分类",
+                            style = MaterialTheme.typography.body2,
+                            fontWeight = FontWeight.W600,
+                            modifier = Modifier.padding(6.dp)
+                        )
+                        // Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 5.dp),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Surface(
+                                shape = CircleShape,
+                                color = (Color(208, 207, 209)),
+                            ) {
+                                Text(
+                                    text = "${userCardViewModel.allCards.value?.size ?: 0}",
+                                    modifier = Modifier.padding(
+                                        start = 6.dp,
+                                        end = 6.dp,
+                                        top = 2.dp,
+                                        bottom = 2.dp
+                                    ),
+                                    style = androidx.compose.ui.text.TextStyle(
+                                        fontWeight = FontWeight.W900,
+                                        fontSize = 12.sp,
+                                        letterSpacing = 0.15.sp,
+                                        color = Color.White
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 自定义分类
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
@@ -249,7 +324,7 @@ fun CategoryColumn(viewModel:UiModel,
                     .fillMaxHeight()
                 ) {
                     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("暂无分类", style = MaterialTheme.typography.h6)
+                        Text("暂无自定义分类", style = MaterialTheme.typography.h6)
                     }
                 }
             }
@@ -280,7 +355,10 @@ fun CategoryColumn(viewModel:UiModel,
     }
 }
 
-
+/**
+ * 菜单用户栏
+ */
+@ExperimentalAnimationApi
 @Composable
 fun UserInfoColumn(viewModel:UiModel,
                    items: List<DrawerItems>,
@@ -290,45 +368,45 @@ fun UserInfoColumn(viewModel:UiModel,
                    file:File,
                    user:UserInfo) {
 
-    /*
-    val profileMinHeight = 160.dp   // 用户栏展开前高度
+
+    /*val profileMinHeight = 160.dp   // 用户栏展开前高度
     val profileMaxHeight = 750.dp   // 展开后高度
     val profileHeight by animateDpAsState(
         targetValue = (if(viewModel.editingProfile) profileMaxHeight else profileMinHeight),
         animationSpec = tween(800)
-    )
+    )*/
 
-     */
-    /*
+    val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        if(it != null) {
+            viewModel.imageUriState.value = it
+            uploadPicture(context, viewModel)
+        }
+    }
+
+    val editModifier = Modifier
+        .size(70.dp)
+        .clip(shape = CircleShape)
+        .clickable {
+            getContent.launch("image/*")
+        }
+
+    val normalModifier = Modifier
+        .size(70.dp)
+        .clip(shape = CircleShape)
+
+
     Column(modifier = Modifier
         .background(Color(90, 143, 185))
         .fillMaxWidth()
-        .height(profileHeight)) {
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
             Row(modifier = Modifier.padding(start = 15.dp, top = 15.dp)){
                 Surface(
                     shape = CircleShape,
-                    modifier = Modifier
-                        .size(70.dp)
-                        .clip(shape = CircleShape)
-                        .clickable {
-                            getContent.launch("image/*")
-                            /*
-                            val sendIntent: Intent = Intent().apply { // 分享 Intent
-                                action = Intent.ACTION_PICK
-                                type = "image/*"
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                            }
-                            val shareIntent = Intent.createChooser(sendIntent, "选择一张图片作为头像吧~")
-                            //     startActivity(content, shareIntent, Bundle())
-                            startActivityForResult(context, shareIntent, 1, Bundle())
-
-                             */
-
-                             */
-                        },
+                    modifier = if(viewModel.editingProfile) editModifier else normalModifier,
+                    border = if(viewModel.editingProfile) BorderStroke(2.dp, Color.DarkGray) else BorderStroke(0.dp, Color.Transparent)
                 ) {
                     viewModel.InitUserProfilePic()
                 }
@@ -346,24 +424,117 @@ fun UserInfoColumn(viewModel:UiModel,
                 }
             }
 
-            Column() {
-                Text(text = user.userName,
+            Column {
+                /*Text(
+                    text = user.userName,
                     style = MaterialTheme.typography.body2,
                     fontWeight = FontWeight.W900,
-                    modifier = Modifier.padding(start = 15.dp, top = 15.dp),
-                    color = Color.White)
-                Text(text = "永远相信美好的事情即将发生",
+                    modifier = Modifier.padding(start = 15.dp, top = 15.dp, end = 15.dp),
+                    color = Color.White
+                )
+                Text(
+                    text = user.signature,
                     style = MaterialTheme.typography.overline,
                     fontWeight = FontWeight.W900,
-                    modifier = Modifier.padding(start = 15.dp, top = 8.dp),
-                    color = Color.White)
+                    modifier = Modifier.padding(
+                        start = 15.dp,
+                        top = 8.dp,
+                        end = 15.dp,
+                        bottom = 15.dp
+                    ),
+                    color = Color.White
+                )*/
+                var userName by remember { mutableStateOf(user.userName) }
+                BasicTextField(
+                    enabled = viewModel.editingProfile,
+                    value = userName,
+                    onValueChange = {
+                        userName = it.replace("\n", "")
+                        if (userName.isNotBlank()) {
+                            userCardViewModel.updateLastSelected(
+                                user.uid,
+                                userName,
+                                user.last!!,
+                                user.signature
+                            )
+                        }
+                    },
+                    modifier = Modifier.height(41.dp).padding(start = 15.dp, top = 10.dp, end = 15.dp),
+                    textStyle = MaterialTheme.typography.body2.copy(
+                        color = Color.White, fontWeight = FontWeight.W900
+                    ),
+                    singleLine = true,
+                    maxLines = 1,
+                    decorationBox = { textField ->
+                        Row(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+
+                            Column() {
+                                textField()
+                                Spacer(Modifier.height(2.dp))
+                                AnimatedVisibility(
+                                    visible = viewModel.editingProfile,
+                                    enter = fadeIn(animationSpec = tween(300)),
+                                    exit = fadeOut(animationSpec = tween(300))
+                                ) {
+                                    Divider(
+                                        color = if (userName.isNotBlank()) Color.White else Color(
+                                            0xFFF74853
+                                        ), thickness = 2.dp
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    cursorBrush = SolidColor(Color.White)
+
+                )
+
+                var userSignature by remember { mutableStateOf(user.signature) }
+                BasicTextField(
+                    enabled = viewModel.editingProfile,
+                    value = userSignature,
+                    onValueChange = {
+                        userSignature = it
+                        userCardViewModel.updateLastSelected(
+                            user.uid,
+                            user.userName,
+                            user.last!!,
+                            userSignature
+                        )
+                    },
+                    modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 10.dp),
+                    textStyle = MaterialTheme.typography.overline.copy(
+                        color = Color.White, fontWeight = FontWeight.W900
+                    ),
+                    decorationBox = { textField ->
+                        Row(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+
+                            Column() {
+                                textField()
+                                Spacer(Modifier.height(2.dp))
+                                AnimatedVisibility(
+                                    visible = viewModel.editingProfile,
+                                    enter = fadeIn(animationSpec = tween(300)),
+                                    exit = fadeOut(animationSpec = tween(300))
+                                ) {
+                                    Divider(color = Color.White, thickness = 2.dp)
+                                }
+                            }
+                        }
+                    },
+                    cursorBrush = SolidColor(Color.White),
+                    maxLines = 5
+                )
             }
         }
     }
 
-     */
-
-     */
 }
 
 fun uploadPicture(context: Context, viewModel: UiModel) {
@@ -394,6 +565,185 @@ fun uploadPicture(context: Context, viewModel: UiModel) {
 
 
 @ExperimentalAnimationApi
+@Composable
+fun EditProfile(viewModel:UiModel,
+                items: List<DrawerItems>,
+                userCardViewModel: UserCardViewModel,
+                categoryItems: List<CategoryCardCount>,
+                context: Context,
+                file:File,
+                user:UserInfo) {
+
+    val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        if(it != null) {
+            viewModel.imageUriState.value = it
+            uploadPicture(context, viewModel)
+        }
+    }
+
+    Box{
+        Image(painter = painterResource(id = R.drawable.edit_bkg), contentDescription = null,modifier = Modifier
+            .fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ){
+            Card(
+                backgroundColor = Color(255, 255, 255 , 235),
+                elevation = 12.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp)
+            ) {
+                // 另一种编辑的界面，已被作者本人抛弃了
+                /*
+                Row(
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center){
+                        Surface(
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .size(60.dp)
+                                .clip(shape = CircleShape)
+                                .clickable {
+                                    getContent.launch("image/*")
+                                },
+                            border = BorderStroke(2.dp, Color.DarkGray)
+                        ) {
+                            viewModel.InitUserProfilePic(context)
+                        }
+                        Text("编辑头像",
+                            style = MaterialTheme.typography.caption,
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = Color.DarkGray)
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(start = 15.dp , end = 25.dp, top = 15.dp, bottom = 15.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+
+                        /*
+                        val focusRequester = FocusRequester()
+                        LaunchedEffect(true) {
+                            focusRequester.requestFocus()
+                        }
+
+                         */
+                        OutlinedTextField(value = user.userName, onValueChange = {
+                            userCardViewModel.updateLastSelected(user.uid, it, user.last!!, user.signature)
+                        },
+                            modifier = Modifier
+                                .height(60.dp),
+                            //    .focusRequester(focusRequester),
+                            label = {Text("你的名字")},
+                            singleLine = true,
+                            textStyle = MaterialTheme.typography.caption
+                        )
+                        Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
+                        OutlinedTextField(value = user.signature, onValueChange = {
+                            userCardViewModel.updateLastSelected(user.uid, user.userName, user.last!!, it)
+                        },
+                            modifier = Modifier.height(150.dp),
+                            label = {Text("你的签名/状态")},
+                            textStyle = MaterialTheme.typography.caption
+                        )
+                    }
+                }*/
+
+                 */
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+
+
+                    val focusRequester = FocusRequester()
+
+                    Surface(
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .padding(start = 13.dp, top = 13.dp, end = 13.dp)
+                            .size(70.dp)
+                            .clip(shape = CircleShape)
+                            .clickable {
+                                getContent.launch("image/*")
+                            },
+                        border = BorderStroke(2.dp, Color.DarkGray)
+                    ) {
+                        viewModel.InitUserProfilePic()
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 26.dp, end = 26.dp, top = 15.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        OutlinedTextField(value = user.userName, onValueChange = {
+                            userCardViewModel.updateLastSelected(user.uid, it, user.last!!, user.signature)
+                        },
+                            modifier = Modifier
+                                .height(60.dp)
+                                .fillMaxWidth()
+                                .focusModifier()
+                                .focusRequester(focusRequester)
+                            ,
+
+                            label = {Text("你的名字")},
+                            singleLine = true,
+                            textStyle = MaterialTheme.typography.button,
+                            trailingIcon = {
+                                AnimatedVisibility(visible = viewModel.enableCancelButton) {
+                                    IconButton(
+                                        onClick = {
+                                            userCardViewModel.updateLastSelected(user.uid, "", user.last!!, user.signature)
+                                        },
+                                    ) {
+                                        Icon(Icons.Filled.Cancel, null)
+                                    }
+                                }
+                            },
+
+                            )
+
+                        Spacer(modifier = Modifier.padding(vertical = 10.dp))
+                        Button(onClick = {
+                            viewModel.editingProfile = false
+                        }) {
+                            Text("testing")
+                        }
+
+                        OutlinedTextField(value = user.signature, onValueChange = {
+                            userCardViewModel.updateLastSelected(user.uid, user.userName, user.last!!, it)
+                        },
+                            modifier = Modifier
+                                .height(150.dp)
+                                .fillMaxWidth(),
+                            label = {Text("你的签名/状态")},
+                            textStyle = MaterialTheme.typography.button
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun DrawerInfo(viewModel:UiModel,
@@ -403,235 +753,54 @@ fun DrawerInfo(viewModel:UiModel,
                context: Context,
                file:File,
                user:UserInfo) {
-
-  //  val context = LocalContext.current
-  //  val file = File(context.getExternalFilesDir(null), "picture.jpg")
-
-    val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        if(it != null) {
-            viewModel.imageUriState.value = it
-            uploadPicture(context, viewModel)
-        }
-    }
-
-    // 编辑信息栏
-    AnimatedVisibility(
-        visible = viewModel.editingProfile,
-        enter = fadeIn( animationSpec = tween(durationMillis = 1000)),
-        exit = fadeOut( animationSpec = tween(durationMillis = 500))
-    ) {
-
-        Box{
-            Image(painter = painterResource(id = R.drawable.edit_bkg), contentDescription = null,modifier = Modifier
-                .fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ){
-                Card(
-                    backgroundColor = Color(255, 255, 255 , 235),
-                    elevation = 12.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(350.dp)
-                ) {
-                    // 另一种编辑的界面，已被作者本人抛弃了
-                    /*
-                    Row(
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxHeight(),
-                            verticalArrangement = Arrangement.Center){
-                            Surface(
-                                shape = CircleShape,
-                                modifier = Modifier
-                                    .padding(12.dp)
-                                    .size(60.dp)
-                                    .clip(shape = CircleShape)
-                                    .clickable {
-                                        getContent.launch("image/*")
-                                    },
-                                border = BorderStroke(2.dp, Color.DarkGray)
-                            ) {
-                                viewModel.InitUserProfilePic(context)
-                            }
-                            Text("编辑头像",
-                                style = MaterialTheme.typography.caption,
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                color = Color.DarkGray)
-                        }
-                        Column(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .padding(start = 15.dp , end = 25.dp, top = 15.dp, bottom = 15.dp),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-
-                            /*
-                            val focusRequester = FocusRequester()
-                            LaunchedEffect(true) {
-                                focusRequester.requestFocus()
-                            }
-
-                             */
-                            OutlinedTextField(value = user.userName, onValueChange = {
-                                userCardViewModel.updateLastSelected(user.uid, it, user.last!!, user.signature)
-                            },
-                                modifier = Modifier
-                                    .height(60.dp),
-                                //    .focusRequester(focusRequester),
-                                label = {Text("你的名字")},
-                                singleLine = true,
-                                textStyle = MaterialTheme.typography.caption
-                            )
-                            Spacer(modifier = Modifier.padding(vertical = 10.dp))
-
-                            OutlinedTextField(value = user.signature, onValueChange = {
-                                userCardViewModel.updateLastSelected(user.uid, user.userName, user.last!!, it)
-                            },
-                                modifier = Modifier.height(150.dp),
-                                label = {Text("你的签名/状态")},
-                                textStyle = MaterialTheme.typography.caption
-                            )
-                        }
-                    }*/
-
-                     */
-                    Column(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-
-
-                        val enableCancelButton = mutableStateOf(true)
-                        val focusRequester = FocusRequester()
-
-                        Surface(
-                            shape = CircleShape,
-                            modifier = Modifier
-                                .padding(start = 13.dp, top = 13.dp, end = 13.dp)
-                                .size(70.dp)
-                                .clip(shape = CircleShape)
-                                .clickable {
-                                    getContent.launch("image/*")
-                                },
-                            border = BorderStroke(2.dp, Color.DarkGray)
-                        ) {
-                            viewModel.InitUserProfilePic(context)
-                        }
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 26.dp, end = 26.dp, top = 15.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ){
-                            OutlinedTextField(value = user.userName, onValueChange = {
-                                userCardViewModel.updateLastSelected(user.uid, it, user.last!!, user.signature)
-                            },
-                                modifier = Modifier
-                                    .height(60.dp)
-                                    .fillMaxWidth()
-                                    .focusRequester(focusRequester)
-                                    .onFocusChanged {
-                                        enableCancelButton.value = !enableCancelButton.value
-                                    },
-
-                                label = {Text("你的名字")},
-                                singleLine = true,
-                                textStyle = MaterialTheme.typography.button,
-                                trailingIcon = {
-                                    AnimatedVisibility(visible = enableCancelButton.value) {
-                                        IconButton(
-                                            onClick = {
-                                                userCardViewModel.updateLastSelected(user.uid, "", user.last!!, user.signature)
-                                            },
-                                        ) {
-                                            Icon(Icons.Filled.Cancel, null)
-                                        }
-                                    }
-                                },
-
-                                )
-
-                            Spacer(modifier = Modifier.padding(vertical = 10.dp))
-
-                            OutlinedTextField(value = user.signature, onValueChange = {
-                                userCardViewModel.updateLastSelected(user.uid, user.userName, user.last!!, it)
-                            },
-                                modifier = Modifier
-                                    .height(150.dp)
-                                    .fillMaxWidth(),
-                                label = {Text("你的签名/状态")},
-                                textStyle = MaterialTheme.typography.button
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     // 用户栏
-    AnimatedVisibility(
-        visible = !viewModel.editingProfile,
-        enter = fadeIn( animationSpec = tween(durationMillis = 1200)),
-        exit = fadeOut( animationSpec = tween(durationMillis = 1500))
+    /*
+    Column(modifier = Modifier
+        .background(Color(90, 143, 185))
+        .fillMaxWidth()
+        .height(160.dp)
     ) {
-        Column(modifier = Modifier
-            .background(Color(90, 143, 185))
-            .fillMaxWidth()
-            .height(160.dp)
+        Column(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(modifier = Modifier.padding(start = 15.dp, top = 15.dp)){
-                    Surface(
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .size(70.dp)
-                            .clip(shape = CircleShape)
-                    ) {
-                        viewModel.InitUserProfilePic(context)
-                    }
-                    Column(horizontalAlignment = Alignment.End, modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier.padding(start = 15.dp, top = 15.dp)){
+                Surface(
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .size(70.dp)
+                        .clip(shape = CircleShape)
+                ) {
+                    viewModel.InitUserProfilePic()
+                }
+                Column(horizontalAlignment = Alignment.End, modifier = Modifier.fillMaxWidth()) {
 
-                        CompositionLocalProvider(LocalContentColor provides Color.White) {
-                            IconButton(onClick = {
-                                viewModel.editingProfile = !viewModel.editingProfile
-                            }) {
-                                if(viewModel.editingProfile)Icon(Icons.Rounded.ArrowBack, contentDescription = "")
-                                else Icon(Icons.Rounded.Edit, contentDescription = "")
-                            }
+                    CompositionLocalProvider(LocalContentColor provides Color.White) {
+                        IconButton(onClick = {
+                            viewModel.editingProfile = !viewModel.editingProfile
+                        }) {
+                            Icon(Icons.Rounded.Edit, contentDescription = null)
+                            /*if(viewModel.editingProfile)Icon(Icons.Rounded.ArrowBack, contentDescription = "")
+                            else Icon(Icons.Rounded.Edit, contentDescription = "")*/
                         }
-
                     }
-                }
 
-                Column() {
-                    Text(text = user.userName,
-                        style = MaterialTheme.typography.body2,
-                        fontWeight = FontWeight.W900,
-                        modifier = Modifier.padding(start = 15.dp, top = 15.dp),
-                        color = Color.White)
-                    Text(text = user.signature,
-                        style = MaterialTheme.typography.overline,
-                        fontWeight = FontWeight.W900,
-                        modifier = Modifier.padding(start = 15.dp, top = 8.dp),
-                        color = Color.White)
                 }
+            }
+
+            Column() {
+                Text(text = user.userName,
+                    style = MaterialTheme.typography.body2,
+                    fontWeight = FontWeight.W900,
+                    modifier = Modifier.padding(start = 15.dp, top = 15.dp),
+                    color = Color.White)
+                Text(text = user.signature,
+                    style = MaterialTheme.typography.overline,
+                    fontWeight = FontWeight.W900,
+                    modifier = Modifier.padding(start = 15.dp, top = 8.dp),
+                    color = Color.White)
             }
         }
     }
-
     /*val switchMode = (
         if(viewModel.editingProfile) {
             Modifier
@@ -645,9 +814,17 @@ fun DrawerInfo(viewModel:UiModel,
                 .animateContentSize(tween(800))
                 .height(160.dp)
         }
-    )*/
+    )*/*/
 
-
+    UserInfoColumn(
+        viewModel,
+        items,
+        userCardViewModel,
+        categoryItems,
+        context,
+        file,
+        user
+    )
 
     // 分类栏
     CategoryColumn(viewModel, items, userCardViewModel, categoryItems, context, file, user)
@@ -682,7 +859,9 @@ fun DisplayDrawerContent(
 
 
         LaunchedEffect(scaffoldState.drawerState.isOpen) {    // 检测菜单是否已经打开
-            viewModel.draweringPage = true
+            if(scaffoldState.drawerState.isOpen) {
+                viewModel.draweringPage = true
+            }
         }
 
 
@@ -697,6 +876,7 @@ fun DisplayDrawerContent(
         if (categoryNum != null) {
             DrawerInfo(viewModel, drawerItems, userCardViewModel, categoryNum, context, file, user)
         }
+
 
     }
 
