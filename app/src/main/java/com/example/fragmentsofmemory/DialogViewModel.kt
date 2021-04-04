@@ -80,6 +80,8 @@ class DialogViewModel: ViewModel() {
         }
     }
 
+
+
 /*
     @Composable
     fun ConfirmAlertDialog(userCardViewModel: UserCardViewModel) {
@@ -190,6 +192,45 @@ class DialogViewModel: ViewModel() {
                         Text("取消")
                     }
                 },
+            )
+        }
+    }
+
+
+    @Composable
+    fun PopUpConfirmDeleteItem(viewModel: UiModel, userCardViewModel: UserCardViewModel) {
+
+        if (viewModel.requestDeleteCard) {
+
+            AlertDialog(
+                onDismissRequest = {
+                    viewModel.requestDeleteCard = false
+                },
+                title = {
+                    Text(text = "真的要删除这片记忆嘛")
+                },
+                text = {
+                    Text(text = "阿巴阿巴阿巴阿巴再考虑考虑啦")
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.deleteCard(userCardViewModel)
+                            viewModel.requestDeleteCard = false
+                        }
+                    ) {
+                        Text("确定")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.requestDeleteCard = false
+                        }
+                    ) {
+                        Text("取消")
+                    }
+                }
             )
         }
     }

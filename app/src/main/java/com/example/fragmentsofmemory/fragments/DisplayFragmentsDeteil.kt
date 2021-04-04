@@ -3,6 +3,7 @@ package com.example.fragmentsofmemory.fragments
 import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -51,7 +52,7 @@ fun DeteilPage(
                     .size(30.dp),
                     shape = CircleShape,
                 ) {
-                    viewModel.InitUserProfilePic()
+                    viewModel.InitUserProfilePic(context)
                     //
                   //  Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
                 }
@@ -76,6 +77,9 @@ fun DeteilPage(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clickable{
+
+                        }
                 ) {
                     Column(modifier = Modifier.fillMaxSize()){
 
@@ -125,7 +129,8 @@ fun DeteilPage(
                                         Icon(Icons.Rounded.Share, contentDescription = null, modifier = viewModel.iconSize)
                                     }
                                     IconButton(onClick = {
-                                        viewModel.deleteCard(userCardViewModel)
+                                      //  viewModel.deleteCard(userCardViewModel)
+                                        viewModel.requestDeleteCard = true
 
                                     }) {
                                         Icon(Icons.Rounded.Delete, contentDescription = null, modifier = viewModel.iconSize)

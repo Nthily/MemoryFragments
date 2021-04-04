@@ -91,7 +91,7 @@ fun CreateMemory(viewModel: UiModel,
                     shape = CircleShape,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
                 ) {
-                    viewModel.InitUserProfilePic()
+                    viewModel.InitUserProfilePic(context)
                   //  Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
                 }
 
@@ -143,8 +143,7 @@ fun CreateMemory(viewModel: UiModel,
                             IconButton(onClick = {
                                 if(viewModel.maining){
                                     viewModel.cardId = cardID
-                                    viewModel.deleteCard(userCardViewModel)
-
+                                    viewModel.requestDeleteCard = true
                                 } }) {
                                 Icon(
                                     Icons.Rounded.Delete,
@@ -295,7 +294,7 @@ fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel, 
 
        //    ShowAllCards(items = userCardViewModel.allCards, scaffoldState = scaffoldState, scope = scope, userInfoViewModel)
         },
-        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             if(user.last != null) {
                 FloatingActionButton(onClick = {

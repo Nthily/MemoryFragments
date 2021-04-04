@@ -21,8 +21,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -30,12 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.fragment.app.testing.FragmentScenario.Companion.launch
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.afollestad.date.dayOfMonth
@@ -46,11 +40,10 @@ import com.afollestad.materialdialogs.datetime.datePicker
 import com.example.fragmentsofmemory.Database.UserInfo
 import com.example.fragmentsofmemory.fragments.*
 import com.example.fragmentsofmemory.ui.theme.MyTheme
-import com.google.accompanist.coil.CoilImage
+
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.delay
 import java.io.File
-import java.nio.file.Files.move
 import java.util.Timer
 import kotlin.concurrent.schedule
 
@@ -94,6 +87,7 @@ class Welcome : AppCompatActivity() {
                         AddingPage(dialogViewModel, viewModel, userCardViewModel, file , context, user!!)
                         dialogViewModel.PopUpAlertDialog(viewModel)
                         dialogViewModel.PopUpAlertDialogDrawerItems(viewModel, userCardViewModel)
+                        dialogViewModel.PopUpConfirmDeleteItem(viewModel, userCardViewModel)
                         ReadingFragments(viewModel, userCardViewModel, file, context, user!!)
                         timePicker()
                     }
@@ -153,7 +147,7 @@ fun WelcomePage(viewModel:UiModel, navController: NavController, file:File, cont
                         shape = CircleShape,
                         modifier = Modifier.size(130.dp)
                     ) {
-                        viewModel.InitUserProfilePic()
+                        viewModel.InitUserProfilePic(context)
                     }
                     Spacer(modifier = Modifier.padding(vertical = 30.dp))
                     Text(text = "欢迎回家", fontWeight = FontWeight.W900, style = MaterialTheme.typography.h6)

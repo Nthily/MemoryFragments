@@ -38,6 +38,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
@@ -435,8 +436,10 @@ fun DrawerInfo(viewModel:UiModel,
                     elevation = 12.dp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
+                        .height(350.dp)
                 ) {
+                    // 另一种编辑的界面，已被作者本人抛弃了
+                    /*
                     Row(
                     ) {
                         Column(
@@ -453,7 +456,7 @@ fun DrawerInfo(viewModel:UiModel,
                                     },
                                 border = BorderStroke(2.dp, Color.DarkGray)
                             ) {
-                                viewModel.InitUserProfilePic()
+                                viewModel.InitUserProfilePic(context)
                             }
                             Text("编辑头像",
                                 style = MaterialTheme.typography.caption,
@@ -466,35 +469,87 @@ fun DrawerInfo(viewModel:UiModel,
                                 .padding(start = 15.dp , end = 25.dp, top = 15.dp, bottom = 15.dp),
                             verticalArrangement = Arrangement.Center
                         ) {
-                            val userName = remember{ mutableStateOf("")}
-                            val userSignature = remember{ mutableStateOf("")}
 
+                            /*
                             val focusRequester = FocusRequester()
                             LaunchedEffect(true) {
                                 focusRequester.requestFocus()
                             }
-                            OutlinedTextField(value = userName.value, onValueChange = {
-                                userName.value = it
+
+                             */
+                            OutlinedTextField(value = user.userName, onValueChange = {
                                 userCardViewModel.updateLastSelected(user.uid, it, user.last!!, user.signature)
                             },
                                 modifier = Modifier
-                                    .height(60.dp)
-                                    .focusRequester(focusRequester),
-                                label = {Text("你の名字")},
+                                    .height(60.dp),
+                                //    .focusRequester(focusRequester),
+                                label = {Text("你的名字")},
                                 singleLine = true,
                                 textStyle = MaterialTheme.typography.caption
                             )
                             Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
-                            OutlinedTextField(value = userSignature.value, onValueChange = {
-                                userSignature.value = it
+                            OutlinedTextField(value = user.signature, onValueChange = {
                                 userCardViewModel.updateLastSelected(user.uid, user.userName, user.last!!, it)
                             },
                                 modifier = Modifier.height(150.dp),
-                                label = {Text("你の签名/状态")},
+                                label = {Text("你的签名/状态")},
                                 textStyle = MaterialTheme.typography.caption
                             )
                         }
+                    }*/
+
+                     */
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        Surface(
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .size(65.dp)
+                                .clip(shape = CircleShape)
+                                .clickable {
+                                    getContent.launch("image/*")
+                                },
+                            border = BorderStroke(1.dp, Color.DarkGray)
+                        ) {
+                            viewModel.InitUserProfilePic(context)
+                        }
+                        /*
+                        Text("编辑头像",
+                            style = MaterialTheme.typography.caption,
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = Color.DarkGray)
+
+                         */
+                        OutlinedTextField(value = user.userName, onValueChange = {
+                            userCardViewModel.updateLastSelected(user.uid, it, user.last!!, user.signature)
+                        },
+                            modifier = Modifier
+                                .height(60.dp),
+                            //    .focusRequester(focusRequester),
+                            label = {Text("你的名字")},
+                            singleLine = true,
+                            textStyle = MaterialTheme.typography.caption,
+                            trailingIcon = {
+                                IconButton(onClick = { /*TODO*/ }) {
+                                    Icon(Icons.Filled.Cancel, null)
+                                }
+                            }
+                        )
+                        Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
+                        OutlinedTextField(value = user.signature, onValueChange = {
+                            userCardViewModel.updateLastSelected(user.uid, user.userName, user.last!!, it)
+                        },
+                            modifier = Modifier.height(150.dp),
+                            label = {Text("你的签名/状态")},
+                            textStyle = MaterialTheme.typography.caption
+                        )
                     }
                 }
             }
@@ -521,23 +576,8 @@ fun DrawerInfo(viewModel:UiModel,
                         modifier = Modifier
                             .size(70.dp)
                             .clip(shape = CircleShape)
-                            .clickable {
-                                //getContent.launch("image/*")
-                                /*
-                                val sendIntent: Intent = Intent().apply { // 分享 Intent
-                                    action = Intent.ACTION_PICK
-                                    type = "image/*"
-                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                                }
-                                //     startActivity(content, shareIntent, Bundle())
-
-                                 */
-
-                                 */
-                            },
                     ) {
-                        Log.d(TAG, "123455555555555555555")
-                        viewModel.InitUserProfilePic()
+                        viewModel.InitUserProfilePic(context)
                     }
                     Column(horizontalAlignment = Alignment.End, modifier = Modifier.fillMaxWidth()) {
 

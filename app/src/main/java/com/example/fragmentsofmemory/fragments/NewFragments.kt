@@ -65,7 +65,7 @@ fun Modifier.percentOffsetX(percent: Float): Modifier =
 
 @Composable
 fun PageContent(viewModel: UiModel, file: File, context: Context) {
-    viewModel.SetSecBackground(background = R.drawable._e826ba47840c0723c356ce92e6d8b39)
+    viewModel.SetSecBackground(background = R.drawable.add_bkg)
     Column(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -77,9 +77,15 @@ fun PageContent(viewModel: UiModel, file: File, context: Context) {
             .fillMaxWidth()
             .height(300.dp),
             colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color(255, 255, 255, 1)),
-            textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.W900),
-            maxLines = Int.MAX_VALUE
+                backgroundColor = Color(255, 255, 255, 1),
+                cursorColor = Color.White
+            ),
+            maxLines = Int.MAX_VALUE,
+            textStyle = LocalTextStyle.current.copy(
+                color = Color.Black,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W900
+            )
         )
 
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
@@ -96,7 +102,7 @@ fun PageContent(viewModel: UiModel, file: File, context: Context) {
                     .align(Alignment.CenterVertically),
                 shape = CircleShape
             ) {
-                viewModel.InitUserProfilePic()
+                viewModel.InitUserProfilePic(context)
               //  Image(painter = painterResource(R.drawable.qq20210315211722), contentDescription = null)
             }
             Spacer(modifier = Modifier.padding(horizontal = 5.dp))

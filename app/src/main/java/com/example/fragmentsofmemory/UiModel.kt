@@ -38,9 +38,15 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat.startActivity
+import coil.ImageLoader
 import coil.memory.MemoryCache
+import coil.request.CachePolicy
 import coil.request.ImageRequest
+import coil.request.SuccessResult
+import coil.size.SizeResolver
+import coil.size.ViewSizeResolver
 import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.glide.GlideImage
 import java.io.File
 
 class UiModel: ViewModel(){
@@ -88,6 +94,8 @@ class UiModel: ViewModel(){
 
     var editingProfile by mutableStateOf(false)
 
+    var requestDeleteCard by mutableStateOf(false)
+
     fun endReading() {
         reading = false
         maining = true
@@ -104,12 +112,10 @@ class UiModel: ViewModel(){
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, message)
             type = "text/plain"
-           // MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
         val shareIntent = Intent.createChooser(sendIntent, "选择分享到哪里吧 ~")
         startActivity(context, shareIntent, Bundle())
     }
-
     @Composable
     fun SetBackground(background: Int): Unit{
         return Image(painter = painterResource(id = background), contentDescription = null,
@@ -123,7 +129,7 @@ class UiModel: ViewModel(){
         return Image(painter = painterResource(id = background), contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
-                .alpha(0.7f),
+                .alpha(0.5f),
             contentScale = ContentScale.Crop)
     }
 
@@ -162,11 +168,15 @@ class UiModel: ViewModel(){
     }
 
     @Composable
-    fun InitUserProfilePic() {
+    fun InitUserProfilePic(context: Context) {
+
         if(File(userAvatarPath).exists()) {
-            CoilImage(Uri.fromFile(File(userAvatarPath)), "123")
+            Log.d(TAG, "updated \n\n")
+            CoilImage(Uri.fromFile(File(userAvatarPath)), null)
+
         } else {
             Image(painter = painterResource(id = R.drawable.qq20210315211722), contentDescription = null)
         }
     }
+
 }
