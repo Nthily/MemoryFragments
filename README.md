@@ -1,6 +1,6 @@
 
 
-### [English](https://github.com/Nthily/compose-note/blob/master/README-es.md)
+## [English](https://github.com/Nthily/compose-note/blob/master/README-es.md)
 
 ## 一个用 Jetpack Compose 构建的记事本
 
