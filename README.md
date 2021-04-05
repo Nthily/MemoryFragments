@@ -23,3 +23,12 @@
 | Screenshots                                                  | Screenshots                                                  |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [![clCqYj.md.jpg](https://z3.ax1x.com/2021/04/06/clCqYj.md.jpg)](https://imgtu.com/i/clCqYj) | [![clCLfs.md.jpg](https://z3.ax1x.com/2021/04/06/clCLfs.md.jpg)](https://imgtu.com/i/clCLfs) |
+
+
+
+### 还有以下东西可以优化
+1. 完善搜索功能
+2. 完善分类功能
+3. 完善分享功能能够变成图片分享
+4. 完善添加事件界面
+5. 完善分类拖动排序（等 Compose 成熟之后
