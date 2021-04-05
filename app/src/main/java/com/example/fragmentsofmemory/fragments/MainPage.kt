@@ -72,14 +72,13 @@ fun CreateMemory(viewModel: UiModel,
                  categoryID: Int?,
                  context: Context) {
 
-    Card(elevation = 10.dp, modifier = Modifier
-        .clip(shape = RoundedCornerShape(14.dp))
+    Card(elevation = 10.dp,
+        modifier = Modifier
         .padding(20.dp)
+        .clip(shape = RoundedCornerShape(14.dp))
     ) {
         Column(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(14.dp))
-
                 .clickable {
                     if (viewModel.maining) {
                         viewModel.testTxt = userContent
@@ -89,7 +88,8 @@ fun CreateMemory(viewModel: UiModel,
                         viewModel.timeResult = ""
                     }
                     viewModel.draweringPage = false
-                },
+                }
+                .clip(shape = RoundedCornerShape(14.dp)),
             horizontalAlignment = Alignment.Start
         ) {
 
