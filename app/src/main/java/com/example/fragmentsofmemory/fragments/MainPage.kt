@@ -281,7 +281,7 @@ fun HomePageEntrances(viewModel: UiModel, appViewModel: AppViewModel, file: File
 
     Scaffold(
         content = {
-            //  HomePage(scaffoldState = scaffoldState, scope = scope, userCardViewModel)
+
             viewModel.SetBackground(background = R.drawable._55)
 
             userCardValue?.let { it1 ->
@@ -294,7 +294,6 @@ fun HomePageEntrances(viewModel: UiModel, appViewModel: AppViewModel, file: File
                 }
             }
 
-       //    ShowAllCards(items = userCardViewModel.allCards, scaffoldState = scaffoldState, scope = scope, userInfoViewModel)
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
@@ -303,8 +302,7 @@ fun HomePageEntrances(viewModel: UiModel, appViewModel: AppViewModel, file: File
                 viewModel.adding = true
                 viewModel.maining = false
             }
-                //   userCardViewModel.AddDatabase("Nthily", "Hello world", "3.15")
-                //    Log.d(TAG, "Hello ${userCardViewModel.allCards.size}")
+
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.add_24px),
@@ -313,7 +311,7 @@ fun HomePageEntrances(viewModel: UiModel, appViewModel: AppViewModel, file: File
                 )
             }
         },
-        //   bottomBar = { BottomApps() },
+
         drawerContent = {
             drawerItems?.let {
                 user.let { it1 ->

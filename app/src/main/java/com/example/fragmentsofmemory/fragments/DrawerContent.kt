@@ -576,9 +576,11 @@ fun DrawerInfo(viewModel:UiModel,
                file:File,
                user:UserInfo) {
     // 用户栏
+    // UserInfoColumn
     UserInfoColumn(viewModel, items, appViewModel, categoryItems, context, file, user)
 
     // 分类栏
+    // CategoryColumn
     CategoryColumn(viewModel, items, appViewModel, categoryItems, context, file, user)
 
 }
