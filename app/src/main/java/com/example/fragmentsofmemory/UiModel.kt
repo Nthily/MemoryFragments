@@ -74,9 +74,9 @@ class UiModel: ViewModel(){
     // 是否已经选择了时间
     // Has the time been selected
 
-    var cardId by mutableStateOf(0)
-    //
-    //
+     var cardId by mutableStateOf(0)
+    // 获取卡片的主键
+    // Get the primary key of the card
 
     var textModify by mutableStateOf("")
     // 用户添加事件的文本
