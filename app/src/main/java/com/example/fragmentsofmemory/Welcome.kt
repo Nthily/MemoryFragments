@@ -98,7 +98,11 @@ class Welcome : AppCompatActivity() {
     override fun onBackPressed() { // Handle the returned events, depending on the interface you are currently in
         when(true){
             (viewModel.adding && viewModel.textModify != "") -> dialogViewModel.openDialog = true
+            // 如果 TextField 中还有文本，就提示用户是否确认离开
+            // If there is still text in the TextField, prompt the user for confirmation to leave
+
             viewModel.adding -> viewModel.endAddPage()
+
             (viewModel.draweringPage && !viewModel.editingProfile) -> viewModel.closeDrawerContent()
             viewModel.reading -> viewModel.endReading()
             viewModel.editingProfile -> viewModel.endEditProfile()
@@ -169,7 +173,7 @@ fun WelcomePage(viewModel:UiModel, navController: NavController, file:File, cont
     }
 
 
-    LaunchedEffect(true){ // You need to use LaunchedEffect instead of Handle otherwise there will be an error
+    LaunchedEffect(true){ // Here, You need to use LaunchedEffect instead of Handle otherwise there will be an error
         delay(2000)
         navController.navigate("mainPage") {
             popUpTo("welcome") { //delete

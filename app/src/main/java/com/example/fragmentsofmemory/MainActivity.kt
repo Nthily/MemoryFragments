@@ -13,6 +13,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.datePicker
 
 
+/**
+ * The MainActivity is no longer used
+ */
+
 class MainActivity : AppCompatActivity() {
 
  //   private val drawerItemsViewModel by viewModels<DrawerItemsViewModel>()

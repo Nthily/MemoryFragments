@@ -58,12 +58,6 @@ fun CategoryColumn(viewModel:UiModel,
                    context: Context,
                    file:File,
                    user:UserInfo) {
-    // 分类栏
-    /*AnimatedVisibility(
-        visible = !viewModel.editingProfile,
-        enter = fadeIn( animationSpec = tween(durationMillis = 1550)),
-        exit = fadeOut( animationSpec = tween(durationMillis = 550))
-    ) {*/
 
         Column(
             modifier = Modifier
@@ -360,13 +354,20 @@ fun UserInfoColumn(viewModel:UiModel,
     val focus = LocalFocusManager.current
     val koptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
     val kactions = KeyboardActions(onDone = { focus.clearFocus() })
-    val keyboard = LocalSoftwareKeyboardController.current
+
 
     /**
      * 下拉动画
+     * Drop-down animation
      */
-    /*val profileMinHeight = 160.dp   // 用户栏展开前高度
-    val profileMaxHeight = 750.dp   // 展开后高度
+    /*val profileMinHeight = 160.dp
+    // 用户栏展开前高度
+    // User bar height before expansion
+
+    val profileMaxHeight = 750.dp
+    // 展开后高度
+    // Expanded height
+
     val profileHeight by animateDpAsState(
         targetValue = (if(viewModel.editingProfile) profileMaxHeight else profileMinHeight),
         animationSpec = tween(800)

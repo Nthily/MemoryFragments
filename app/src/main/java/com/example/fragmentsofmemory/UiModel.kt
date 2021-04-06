@@ -91,7 +91,6 @@ class UiModel: ViewModel(){
     // Is a new category currently being added
 
     var categoryName by mutableStateOf("")
-    //
 
     var requestCloseDrawer by mutableStateOf(false)
     // 请求关闭抽屉栏
