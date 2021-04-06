@@ -5,7 +5,7 @@
 
 
 ## 🙌 Description
-### Stores everything you record, supports deletion and editing, and supports sorting functions
+### Built with Jetpack Compose + room database, you can change personal information and create different categories
 
 
 
