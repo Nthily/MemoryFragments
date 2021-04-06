@@ -23,14 +23,14 @@ import androidx.compose.ui.unit.dp
 import com.example.fragmentsofmemory.Database.UserInfo
 import com.example.fragmentsofmemory.R
 import com.example.fragmentsofmemory.UiModel
-import com.example.fragmentsofmemory.UserCardViewModel
+import com.example.fragmentsofmemory.AppViewModel
 import java.io.File
 
 
 @Composable
 fun DeteilPage(
     viewModel: UiModel,
-    userCardViewModel: UserCardViewModel,
+    appViewModel: AppViewModel,
     file: File,
     context: Context,
     user:UserInfo) {
@@ -147,7 +147,7 @@ fun DeteilPage(
 
 @Composable
 fun ReadingFragments(viewModel: UiModel,
-                     userCardViewModel: UserCardViewModel,
+                     appViewModel: AppViewModel,
                      file: File,
                      context: Context,
                      user: UserInfo) {
@@ -162,7 +162,7 @@ fun ReadingFragments(viewModel: UiModel,
     ) {
         Scaffold(
             content = {
-                DeteilPage(viewModel, userCardViewModel,file,context, user)
+                DeteilPage(viewModel, appViewModel,file,context, user)
             },
 
             topBar = {

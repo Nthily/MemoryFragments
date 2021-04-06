@@ -1,22 +1,11 @@
 package com.example.fragmentsofmemory.fragments
 
-import android.app.Activity
-import android.content.ContentValues
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Bitmap
-import android.util.Log
-import androidx.activity.compose.registerForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,22 +19,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fragmentsofmemory.*
 import com.example.fragmentsofmemory.Database.CategoryCardCount
 import com.example.fragmentsofmemory.Database.DrawerItems
@@ -53,11 +36,8 @@ import com.example.fragmentsofmemory.Database.UserCard
 import com.example.fragmentsofmemory.Database.UserInfo
 import com.example.fragmentsofmemory.R
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
 
 
 @Composable
@@ -66,7 +46,7 @@ fun CreateMemory(viewModel: UiModel,
                  userContent:String,
                  memoryOrder:Int,
                  time: String,
-                 userCardViewModel: UserCardViewModel,
+                 appViewModel: AppViewModel,
                  cardID:Int,
                  file: File,
                  categoryID: Int?,
@@ -127,7 +107,7 @@ fun CreateMemory(viewModel: UiModel,
                 .padding(start = 10.dp, top = 10.dp))
 
 
-            val categories by userCardViewModel.drawer.observeAsState()
+            val categories by appViewModel.drawer.observeAsState()
             val categoryName = categories?.find { it.uid == categoryID }?.drawerItems
 
 
@@ -195,7 +175,7 @@ fun CreateMemory(viewModel: UiModel,
 fun ShowAllCards(viewModel: UiModel,
                  items: List<UserCard>,
                  user:UserInfo,
-                 userCardViewModel: UserCardViewModel,
+                 appViewModel: AppViewModel,
                  file: File,
                  context: Context) {
 
@@ -223,7 +203,7 @@ fun ShowAllCards(viewModel: UiModel,
                                 userContent = items[it].content,
                                 time = items[it].time,
                                 memoryOrder = it + 1,
-                                userCardViewModel = userCardViewModel,
+                                appViewModel = appViewModel,
                                 cardID = items[it].id,
                                 file = file,
                                 categoryID = items[it].categoryID,
@@ -288,16 +268,16 @@ fun TopBar(viewModel: UiModel, scaffoldState: ScaffoldState, scope: CoroutineSco
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
-fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel, file: File, context: Context, user:UserInfo) {
+fun HomePageEntrances(viewModel: UiModel, appViewModel: AppViewModel, file: File, context: Context, user:UserInfo) {
 
     val scaffoldState = rememberScaffoldState(drawerState = DrawerState(DrawerValue.Closed) {
         (it == DrawerValue.Closed) || viewModel.maining
     })
     val scope = rememberCoroutineScope()
 
-    val userCardValue: List<UserCard>? by userCardViewModel.allCards.observeAsState()
-    val userCategoryNum: List<CategoryCardCount>? by userCardViewModel.cardNum.observeAsState()
-    val drawerItems: List<DrawerItems>? by userCardViewModel.drawer.observeAsState()
+    val userCardValue: List<UserCard>? by appViewModel.allCards.observeAsState()
+    val userCategoryNum: List<CategoryCardCount>? by appViewModel.cardNum.observeAsState()
+    val drawerItems: List<DrawerItems>? by appViewModel.drawer.observeAsState()
 
     Scaffold(
         content = {
@@ -308,7 +288,7 @@ fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel, 
                 user.let { it2 ->
                     ShowAllCards(viewModel,
                         items = it1,
-                        it2, userCardViewModel,
+                        it2, appViewModel,
                         file,
                         context)
                 }
@@ -341,7 +321,7 @@ fun HomePageEntrances(viewModel: UiModel, userCardViewModel: UserCardViewModel, 
                         viewModel = viewModel,
                         scaffoldState = scaffoldState,
                         scope = scope,
-                        userCardViewModel = userCardViewModel,
+                        appViewModel = appViewModel,
                         categoryNum = userCategoryNum,
                         drawerItems = it,
                         file = file,

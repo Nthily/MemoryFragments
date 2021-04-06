@@ -1,11 +1,8 @@
 package com.example.fragmentsofmemory.fragments
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.registerForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,7 +10,6 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -23,52 +19,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fragmentsofmemory.Database.CategoryCardCount
 import com.example.fragmentsofmemory.Database.DrawerItems
-import com.example.fragmentsofmemory.R
 import com.example.fragmentsofmemory.UiModel
-import com.example.fragmentsofmemory.UserCardViewModel
+import com.example.fragmentsofmemory.AppViewModel
 import com.example.fragmentsofmemory.ui.theme.MyTheme
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.rounded.*
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.ImeOptions
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.constraintlayout.widget.ConstraintLayout
-import coil.request.CachePolicy
-import coil.util.DebugLogger
 import com.example.fragmentsofmemory.Database.UserInfo
-import com.google.accompanist.coil.CoilImage
 import com.yalantis.ucrop.UCrop
-import kotlinx.coroutines.delay
 import java.io.*
 import kotlin.math.roundToInt
 
@@ -77,7 +53,7 @@ import kotlin.math.roundToInt
 @Composable
 fun CategoryColumn(viewModel:UiModel,
                    items: List<DrawerItems>,
-                   userCardViewModel: UserCardViewModel,
+                   appViewModel: AppViewModel,
                    categoryItems: List<CategoryCardCount>,
                    context: Context,
                    file:File,
@@ -102,7 +78,7 @@ fun CategoryColumn(viewModel:UiModel,
                         .clickable {
                             if(!viewModel.editingProfile) {
                                 viewModel.requestCloseDrawer = true
-                                userCardViewModel.updateLastSelected(
+                                appViewModel.updateLastSelected(
                                     user.uid,
                                     user.userName,
                                     null,
@@ -141,7 +117,7 @@ fun CategoryColumn(viewModel:UiModel,
                                 color = (Color(208, 207, 209)),
                             ) {
                                 Text(
-                                    text = "${userCardViewModel.allCards.value?.size ?: 0}",
+                                    text = "${appViewModel.allCards.value?.size ?: 0}",
                                     modifier = Modifier.padding(
                                         start = 6.dp,
                                         end = 6.dp,
@@ -216,7 +192,7 @@ fun CategoryColumn(viewModel:UiModel,
                                         if (!viewModel.hasAnyExtraButtonRevealed && !viewModel.editingProfile) {
                                             viewModel.requestCloseDrawer = true
                                            // viewModel.currentTitle = items[it].drawerItems
-                                            userCardViewModel.updateLastSelected(
+                                            appViewModel.updateLastSelected(
                                                 user.uid,
                                                 user.userName,
                                                 items[it].uid,
@@ -318,7 +294,7 @@ fun CategoryColumn(viewModel:UiModel,
                                             onClick = {
                                                 editable = false
                                                 viewModel.hasAnyExtraButtonRevealed = false
-                                                userCardViewModel.deleteCategoryDataBase(items[it].uid)
+                                                appViewModel.deleteCategoryDataBase(items[it].uid)
                                             }, modifier = Modifier
                                                 .background(Color(0xFFE65B65))
                                                 .padding(1.dp)
@@ -375,7 +351,7 @@ fun CategoryColumn(viewModel:UiModel,
 @Composable
 fun UserInfoColumn(viewModel:UiModel,
                    items: List<DrawerItems>,
-                   userCardViewModel: UserCardViewModel,
+                   appViewModel: AppViewModel,
                    categoryItems: List<CategoryCardCount>,
                    context: Context,
                    file:File,
@@ -472,7 +448,7 @@ fun UserInfoColumn(viewModel:UiModel,
                     onValueChange = {
                         userName = it.replace("\n", "")
                         if (userName.isNotBlank()) {
-                            userCardViewModel.updateLastSelected(
+                            appViewModel.updateLastSelected(
                                 user.uid,
                                 userName.trimEnd(),
                                 user.last,
@@ -520,7 +496,7 @@ fun UserInfoColumn(viewModel:UiModel,
                     value = userSignature,
                     onValueChange = {
                         userSignature = it
-                        userCardViewModel.updateLastSelected(
+                        appViewModel.updateLastSelected(
                             user.uid,
                             user.userName,
                             user.last,
@@ -594,16 +570,16 @@ fun uploadPicture(context: Context, viewModel: UiModel) {
 @Composable
 fun DrawerInfo(viewModel:UiModel,
                items: List<DrawerItems>,
-               userCardViewModel: UserCardViewModel,
+               appViewModel: AppViewModel,
                categoryItems: List<CategoryCardCount>,
                context: Context,
                file:File,
                user:UserInfo) {
     // 用户栏
-    UserInfoColumn(viewModel, items, userCardViewModel, categoryItems, context, file, user)
+    UserInfoColumn(viewModel, items, appViewModel, categoryItems, context, file, user)
 
     // 分类栏
-    CategoryColumn(viewModel, items, userCardViewModel, categoryItems, context, file, user)
+    CategoryColumn(viewModel, items, appViewModel, categoryItems, context, file, user)
 
 }
 
@@ -617,7 +593,7 @@ fun DisplayDrawerContent(
     viewModel:UiModel,
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
-    userCardViewModel: UserCardViewModel,
+    appViewModel: AppViewModel,
     categoryNum: List<CategoryCardCount>?,
     drawerItems: List<DrawerItems>,
     file: File,
@@ -665,7 +641,7 @@ fun DisplayDrawerContent(
         }
 
         if (categoryNum != null) {
-            DrawerInfo(viewModel, drawerItems, userCardViewModel, categoryNum, context, file, user)
+            DrawerInfo(viewModel, drawerItems, appViewModel, categoryNum, context, file, user)
         }
 
 

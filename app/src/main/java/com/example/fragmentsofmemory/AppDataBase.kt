@@ -28,6 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
                     val drawer = database.getDrawer()
                     val info = database.getUserInfo()
 
+                    // will only be initialized the first time the program is run
                     dao.insert(UserCard(0, null, "Hello World", "2021.3.28"))
                     info.insert(UserInfo(0, "Nthily", null, "永远相信美好的事情即将发生"))
                 }

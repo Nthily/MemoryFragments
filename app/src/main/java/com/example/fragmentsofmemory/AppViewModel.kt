@@ -10,14 +10,17 @@ import com.example.fragmentsofmemory.Database.UserInfo
 import kotlinx.coroutines.*
 import java.util.Date
 
-class UserCardViewModel(application: Application): AndroidViewModel(application){
+class AppViewModel(application: Application): AndroidViewModel(application){
 
     private val db by lazy{AppDatabase.getDatabase(application, CoroutineScope(SupervisorJob()))}
 
-    var allCards: LiveData<List<UserCard>> = db.notes().getAll()
-    var cardNum: LiveData<List<CategoryCardCount>> = db.notes().searchCardNum()
-    var drawer: LiveData<List<DrawerItems>> = db.getDrawer().getAll()
-    var user: LiveData<UserInfo> = db.getUserInfo().getUser()
+    /**
+     * get all information from database
+     */
+    var allCards: LiveData<List<UserCard>> = db.notes().getAll() // what the user has recorded
+    var cardNum: LiveData<List<CategoryCardCount>> = db.notes().searchCardNum() // total number of cards per category
+    var drawer: LiveData<List<DrawerItems>> = db.getDrawer().getAll() // get all categories
+    var user: LiveData<UserInfo> = db.getUserInfo().getUser() // get user info name, signature etc..
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

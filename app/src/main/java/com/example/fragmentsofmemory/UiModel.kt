@@ -1,23 +1,12 @@
 package com.example.fragmentsofmemory
 
-import android.content.ContentValues
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
-import androidx.activity.compose.registerForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -25,30 +14,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import com.example.fragmentsofmemory.ui.theme.MyTheme
-import androidx.activity.compose.registerForActivityResult
-import androidx.activity.result.launch
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat.startActivity
-import coil.ImageLoader
-import coil.memory.MemoryCache
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import coil.request.SuccessResult
-import coil.size.SizeResolver
-import coil.size.ViewSizeResolver
 import com.google.accompanist.coil.CoilImage
-import com.google.accompanist.glide.GlideImage
 import java.io.File
-import java.util.Date
+
+
+/**
+ * Handles all classes regarding interface state
+ */
 
 class UiModel: ViewModel(){
    // var theme by mutableStateOf(MyTheme.Theme.Dark)
@@ -159,8 +135,8 @@ class UiModel: ViewModel(){
     }
 
 
-    fun deleteCard(userCardViewModel: UserCardViewModel) {
-        userCardViewModel.removeDataBase(cardId)
+    fun deleteCard(appViewModel: AppViewModel) {
+        appViewModel.removeDataBase(cardId)
         reading = false
         maining = true
         timeResult = ""

@@ -1,19 +1,8 @@
 package com.example.fragmentsofmemory
 
-import android.content.ContentValues
-import android.content.ContentValues.TAG
-import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -21,15 +10,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fragmentsofmemory.Database.DrawerItems
-import com.example.fragmentsofmemory.fragments.userContent
 import kotlinx.coroutines.delay
-import java.util.Date
+
+
+/**
+ * All classes about AlertDialog interface
+ */
 
 class DialogViewModel: ViewModel() {
     var openDialog by  mutableStateOf(false)
@@ -39,7 +27,7 @@ class DialogViewModel: ViewModel() {
 
         if (openDialog) {
 
-            if(viewModel.textModify.isBlank()){     // 内容为空或只包含不可见字符（空格、换行等）
+            if(viewModel.textModify.isBlank()){     // Content is empty or contains only non-visible characters (spaces, line breaks, etc.)
                 openDialog = false
                 viewModel.adding = false
                 viewModel.maining = true
@@ -48,9 +36,6 @@ class DialogViewModel: ViewModel() {
             else {
                 AlertDialog(
                     onDismissRequest = {
-                        // Dismiss the dialog when the user clicks outside the dialog or on the back
-                        // button. If you want to disable that functionality, simply use an empty
-                        // onCloseRequest.
                         openDialog = false
                     },
                     title = {
@@ -62,7 +47,6 @@ class DialogViewModel: ViewModel() {
                     confirmButton = {
                         TextButton(
                             onClick = {
-                                // TODO 检测是否还有文字
                                 openDialog = false
                                 viewModel.timeResult = ""
                                 viewModel.textModify = ""
@@ -87,64 +71,19 @@ class DialogViewModel: ViewModel() {
         }
     }
 
-
-
-/*
-    @Composable
-    fun ConfirmAlertDialog(userCardViewModel: UserCardViewModel) {
-        val viewModel: UiModel = viewModel()
-        if (finishDialog) {
-            AlertDialog(
-                onDismissRequest = {
-                    // Dismiss the dialog when the user clicks outside the dialog or on the back
-                    // button. If you want to disable that functionality, simply use an empty
-                    // onCloseRequest.
-                    finishDialog = false
-                },
-                title = {
-                    Text(text = "确定将添加到碎片中吗")
-                },
-                text = {
-                    Text(text = "好的不好好的不要,好的,添加吧")
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            userCardViewModel.AddDatabase("nmsl", userContent.value)
-                            finishDialog = false
-                            viewModel.adding = false
-                        }
-                    ) {
-                        Text("确定")
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = {
-                            finishDialog = false
-                        }
-                    ) {
-                        Text("还是算了吧")
-                    }
-                }
-            )
-        }
-    }*/
-
-
     @ExperimentalComposeUiApi
     @Composable
-    fun PopUpAlertDialogDrawerItems(viewModel: UiModel, userCardViewModel: UserCardViewModel) {
+    fun PopUpAlertDialogDrawerItems(viewModel: UiModel, appViewModel: AppViewModel) {
         val focus = FocusRequester()
         val keyboard = LocalSoftwareKeyboardController.current
 
         if(viewModel.addNewCategory || viewModel.editingCategory) {
 
-            val categoryName0 by remember { mutableStateOf(viewModel.categoryName) }    // 正在编辑的分类的原名称
+            val categoryName0 by remember { mutableStateOf(viewModel.categoryName) }    // The original name of the category being edited
             var categoryName by remember { mutableStateOf(viewModel.categoryName) }
 
-            val error1 = categoryName.isBlank()    // 分类名称为空错误
-            val error2 = userCardViewModel.drawer.value?.any {    // 分类名称已存在错误
+            val error1 = categoryName.isBlank()    // Category name is null error
+            val error2 = appViewModel.drawer.value?.any {    // Category name error already exists
                 val con = it.drawerItems.trimEnd() == categoryName.trimEnd()
                 (viewModel.addNewCategory && con)
                         || (viewModel.editingCategory && con && it.uid != viewModel.editingCategoryUid)
@@ -153,9 +92,6 @@ class DialogViewModel: ViewModel() {
             AlertDialog(
 
                 onDismissRequest = {
-                    // Dismiss the dialog when the user clicks outside the dialog or on the back
-                    // button. If you want to disable that functionality, simply use an empty
-                    // onCloseRequest.
                     viewModel.addNewCategory = false
                     viewModel.editingCategory = false
                 },
@@ -214,26 +150,19 @@ class DialogViewModel: ViewModel() {
                        }
                    }
 
-                    /*LaunchedEffect(viewModel.editingCategory) {
-                        if(viewModel.editingCategory) {
-                            focus.requestFocus()
-                            delay(500)
-                            keyboard?.showSoftwareKeyboard()
-                        }
-                    }*/
                 },
                 confirmButton = {
                     TextButton(
                         enabled = !(error1 || error2),
                         onClick = {
                             if(viewModel.addNewCategory) {
-                                userCardViewModel.addCategoryDataBase(categoryName)
+                                appViewModel.addCategoryDataBase(categoryName)
                                 viewModel.addNewCategory = false
                                 viewModel.categoryName = ""
                             }
 
                             if(viewModel.editingCategory){
-                                userCardViewModel.updateCategoryDataBaseName(viewModel.editingCategoryUid, categoryName)
+                                appViewModel.updateCategoryDataBaseName(viewModel.editingCategoryUid, categoryName)
                                 viewModel.editingCategory = false
                                 viewModel.categoryName = ""
                             }
@@ -260,7 +189,7 @@ class DialogViewModel: ViewModel() {
 
 
     @Composable
-    fun PopUpConfirmDeleteItem(viewModel: UiModel, userCardViewModel: UserCardViewModel) {
+    fun PopUpConfirmDeleteItem(viewModel: UiModel, appViewModel: AppViewModel) {
 
         if (viewModel.requestDeleteCard) {
 
@@ -277,7 +206,7 @@ class DialogViewModel: ViewModel() {
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            viewModel.deleteCard(userCardViewModel)
+                            viewModel.deleteCard(appViewModel)
                             viewModel.requestDeleteCard = false
                         }
                     ) {

@@ -1,19 +1,12 @@
 package com.example.fragmentsofmemory
 
 import android.app.Activity
-import android.content.ContentValues
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -46,25 +39,25 @@ import com.example.fragmentsofmemory.ui.theme.MyTheme
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.delay
 import java.io.File
-import java.util.Date
 import java.util.Timer
 import kotlin.concurrent.schedule
 
 class Welcome : AppCompatActivity() {
 
-    private val userCardViewModel by viewModels<UserCardViewModel>()
+    // Init
+    private val appViewModel by viewModels<AppViewModel>()
     private val dialogViewModel:DialogViewModel by viewModels()
     private val viewModel:UiModel by viewModels()
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // receiving data from Ucrop
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             File(viewModel.userAvatarPath).createNewFile()
             viewModel.userAvatarUploading!!.copyTo(File(viewModel.userAvatarPath), true)
             viewModel.userAvatarUploadedPath = viewModel.userAvatarUploading!!.absolutePath
-            Toast.makeText(this, "头像更新成功", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "头像更新成功", Toast.LENGTH_LONG).show() // upload successfully
         } else if(resultCode == UCrop.RESULT_ERROR) {
-            Toast.makeText(this, "头像更新失败", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "头像更新失败", Toast.LENGTH_LONG).show() // upload failed
         }
     }
 
@@ -76,23 +69,24 @@ class Welcome : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent{
-            val context = LocalContext.current
-            val file = File(context.getExternalFilesDir(null), "picture.jpg")
+            val context = LocalContext.current //get application context
+            val file = File(context.getExternalFilesDir(null), "picture.jpg") // get avatar absolutePath
             val navController = rememberNavController()
-            val user: UserInfo? by userCardViewModel.user.observeAsState()
+            val user: UserInfo? by appViewModel.user.observeAsState()
             viewModel.userAvatarPath = file.absolutePath
 
+            // use NavHost to create welcome Ui and then to main page
                NavHost(navController, startDestination = "welcome") {
                 composable("welcome") { WelcomePage( viewModel, navController,file, context) }
                 composable("mainPage") {
 
                     MyTheme(viewModel) {
-                        HomePageEntrances(viewModel, userCardViewModel, file, context, user!!)
-                        AddingPage(dialogViewModel, viewModel, userCardViewModel, file , context, user!!)
+                        HomePageEntrances(viewModel, appViewModel, file, context, user!!)
+                        AddingPage(dialogViewModel, viewModel, appViewModel, file , context, user!!)
                         dialogViewModel.PopUpAlertDialog(viewModel)
-                        dialogViewModel.PopUpAlertDialogDrawerItems(viewModel, userCardViewModel)
-                        dialogViewModel.PopUpConfirmDeleteItem(viewModel, userCardViewModel)
-                        ReadingFragments(viewModel, userCardViewModel, file, context, user!!)
+                        dialogViewModel.PopUpAlertDialogDrawerItems(viewModel, appViewModel)
+                        dialogViewModel.PopUpConfirmDeleteItem(viewModel, appViewModel)
+                        ReadingFragments(viewModel, appViewModel, file, context, user!!)
                         timePicker()
                     }
                 }
@@ -101,7 +95,7 @@ class Welcome : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
+    override fun onBackPressed() { // Handle the returned events, depending on the interface you are currently in
         when(true){
             (viewModel.adding && viewModel.textModify != "") -> dialogViewModel.openDialog = true
             viewModel.adding -> viewModel.endAddPage()
@@ -111,7 +105,8 @@ class Welcome : AppCompatActivity() {
             else -> super.onBackPressed()
         }
     }
-    private fun timePicker() {
+
+    private fun timePicker() { // select time
         if(viewModel.timing) {
             MaterialDialog(this).show {
                 datePicker { dialog, date ->
@@ -174,7 +169,7 @@ fun WelcomePage(viewModel:UiModel, navController: NavController, file:File, cont
     }
 
 
-    LaunchedEffect(true){
+    LaunchedEffect(true){ // You need to use LaunchedEffect instead of Handle otherwise there will be an error
         delay(2000)
         navController.navigate("mainPage") {
             popUpTo("welcome") { //delete

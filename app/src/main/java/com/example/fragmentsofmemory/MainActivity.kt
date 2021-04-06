@@ -1,54 +1,22 @@
 package com.example.fragmentsofmemory
 
-import android.app.LauncherActivity
-import android.content.ContentValues
-import android.content.ContentValues.TAG
-import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.month
 import com.afollestad.date.year
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.datePicker
-import com.example.fragmentsofmemory.fragments.*
-
-import com.example.fragmentsofmemory.ui.theme.MyTheme
-import androidx.activity.compose.registerForActivityResult
-import androidx.activity.result.launch
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import kotlinx.coroutines.delay
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
 
 
 class MainActivity : AppCompatActivity() {
 
  //   private val drawerItemsViewModel by viewModels<DrawerItemsViewModel>()
-    private val userCardViewModel by viewModels<UserCardViewModel>()
+    private val userCardViewModel by viewModels<AppViewModel>()
 
     private val dialogViewModel:DialogViewModel by viewModels()
     private val viewModel:UiModel by viewModels()

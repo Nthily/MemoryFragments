@@ -6,50 +6,26 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlin.math.roundToInt
-import java.time.format.TextStyle
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import com.afollestad.date.dayOfMonth
-import com.afollestad.date.month
-import com.afollestad.date.year
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.datetime.datePicker
 import com.example.fragmentsofmemory.*
 import com.example.fragmentsofmemory.Database.UserInfo
 import com.example.fragmentsofmemory.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Date
 
 var userContent = mutableStateOf("")
 
@@ -132,7 +108,7 @@ fun PageContent(viewModel: UiModel, file: File, context: Context) {
 @Composable
 fun AddingPage(dialogViewModel: DialogViewModel,
                viewModel: UiModel,
-               userCardViewModel: UserCardViewModel,
+               appViewModel: AppViewModel,
                file:File,
                context: Context,
                user: UserInfo
@@ -170,7 +146,7 @@ fun AddingPage(dialogViewModel: DialogViewModel,
 
                                     if (viewModel.editing) {
                                         //user.last?.let {
-                                            userCardViewModel.updateCardMsg(
+                                            appViewModel.updateCardMsg(
                                                 viewModel.cardId,
                                                 viewModel.textModify,
                                                 viewModel.timeResult,
@@ -179,7 +155,7 @@ fun AddingPage(dialogViewModel: DialogViewModel,
                                         //}
                                     } else {
                                         //user.last?.let {
-                                            userCardViewModel.addDataBase(
+                                            appViewModel.addDataBase(
                                                 viewModel.textModify,
                                                 viewModel.timeResult,
                                                 user.last
