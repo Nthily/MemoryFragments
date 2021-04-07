@@ -1,4 +1,4 @@
-## [简体中文](https://github.com/Nthily/compose-note/blob/master/README-zh.md)
+## [简体中文](https://github.com/Nthily/compose-note/blob/master/README-cn.md)
 
 ## A beautiful interface created through Jetpack Compose
 
