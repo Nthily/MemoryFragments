@@ -1,3 +1,5 @@
+## [简体中文](https://github.com/Nthily/compose-note/blob/master/README-zh.md)
+
 ## A beautiful interface created through Jetpack Compose
 
 
